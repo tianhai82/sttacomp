@@ -18,19 +18,22 @@
       .then(data => {
         round = data.rounds;
         players = [];
+        winnersPositions = [];
+        runnerUpsPositions = [];
+        byesPositions = [];
         for (let i = 0; i < round; i++) {
           players.push(`${i + 1}`);
         }
-        data.byes.forEach(pos => {
-          players[pos - 1] = `${pos} BYE`;
+        data.byes.forEach((pos, i) => {
+          players[pos - 1] = `${pos}: BYE ${i + 1}`;
           byesPositions.push(pos);
         });
         data.winners.forEach((pos, i) => {
-          players[pos - 1] = `${pos} Winner: ${i + 1}`;
+          players[pos - 1] = `${pos}: Winner: ${i + 1}`;
           winnersPositions.push(pos);
         });
         data.runnerups.forEach((pos, i) => {
-          players[pos - 1] = `${pos} Runner-up: ${i + 1}`;
+          players[pos - 1] = `${pos}: Runner-up: ${i + 1}`;
           runnerUpsPositions.push(pos);
         });
         players = players;
