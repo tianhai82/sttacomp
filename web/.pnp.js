@@ -51,7 +51,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["svelte-preprocess", "virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:3.7.4"],
             ["svetamat", "virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:0.3.4"],
             ["tailwindcss", "npm:1.4.5"],
-            ["tailwindcss-elevation", "npm:0.3.4"]
+            ["tailwindcss-elevation", "npm:0.3.4"],
+            ["wretch", "npm:1.7.2"]
           ],
           "packagePeers": [
             "svelte",
@@ -2671,7 +2672,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["svelte-preprocess", "virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:3.7.4"],
             ["svetamat", "virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:0.3.4"],
             ["tailwindcss", "npm:1.4.5"],
-            ["tailwindcss-elevation", "npm:0.3.4"]
+            ["tailwindcss-elevation", "npm:0.3.4"],
+            ["wretch", "npm:1.7.2"]
           ],
           "packagePeers": [
             "svelte",
@@ -2963,6 +2965,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/wrappy-npm-1.0.2-916de4d4b3-2.zip/node_modules/wrappy/",
           "packageDependencies": [
             ["wrappy", "npm:1.0.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["wretch", [
+        ["npm:1.7.2", {
+          "packageLocation": "./.yarn/cache/wretch-npm-1.7.2-c54d278810-2.zip/node_modules/wretch/",
+          "packageDependencies": [
+            ["wretch", "npm:1.7.2"]
           ],
           "linkType": "HARD",
         }]

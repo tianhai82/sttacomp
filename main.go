@@ -1,17 +1,14 @@
 package main
 
 import (
-	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/tianhai82/sttacomp/api"
 )
 
 func main() {
 	r := gin.Default()
-	r.Use(static.Serve("/", static.LocalFile("./web/public", false)))
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	apiRouter := r.Group("/api")
+	drawCtl := &api.DrawApiController{}
+	drawCtl.AddAPIs(apiRouter)
 	r.Run()
 }
