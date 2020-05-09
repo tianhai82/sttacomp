@@ -17,21 +17,19 @@ COPY . ./
 # Build the binary.
 RUN CGO_ENABLED=0 GOOS=linux go build -mod=readonly -v -o server
 
-FROM node:10.10-alpine as web-builder
-WORKDIR /app/web
-COPY ./web ./
-RUN node ./.yarn/releases/yarn-rc.js
-RUN node ./.yarn/releases/yarn-rc.js build
+# FROM node:10.10-alpine as web-builder
+# WORKDIR /app/web
+# COPY ./web ./
+# RUN node ./.yarn/releases/yarn-rc.js
+# RUN node ./.yarn/releases/yarn-rc.js build
 
 # Use the official Alpine image for a lean production container.
-# https://hub.docker.com/_/alpine
-# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
+
 FROM alpine:3
 RUN apk add --no-cache ca-certificates
 
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/server /server
-COPY --from=web-builder /app/web/public /web/public   
 
 # Run the web service on container startup.
 CMD ["/server"]
