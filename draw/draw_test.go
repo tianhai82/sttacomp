@@ -20,7 +20,8 @@ func TestGetByes(t *testing.T) {
 func testGetByesRound(round int) bool {
 	pos := getPos(round)
 	byes := GetByes(pos)
-	seeds := GetSeedingOrder(pos)[len(pos)/2:]
+	seeds := GetSeedingOrder(pos)
+	seeds = seeds[len(pos)/2:]
 	return isReverse(seeds, byes)
 }
 

@@ -1,5 +1,5 @@
 <script>
-  import { Input, Button } from "svetamat";
+  import { Input, Button, Checkbox } from "svetamat";
   import { calculateDraws } from "../apis/draw";
   import Knockout from "../components/Knockout.svelte";
 
@@ -8,6 +8,18 @@
   let round = 0;
   let players = [];
   let winnersPositions = [];
+  let sorted = false;
+  let sortedWinnersPosition = [];
+  let winnersPositionDisplay = [];
+  $: {
+    sortedWinnersPosition = [...winnersPositions];
+    sortedWinnersPosition.sort(numberOrder);
+  }
+  $: if (sorted) {
+    winnersPositionDisplay = sortedWinnersPosition;
+  } else {
+    winnersPositionDisplay = winnersPositions;
+  }
   let runnerUpsPositions = [];
   let byesPositions = [];
   function numberOrder(a, b) {
@@ -37,7 +49,6 @@
           runnerUpsPositions.push(pos);
         });
         players = players;
-        winnersPositions.sort(numberOrder);
         winnersPositions = winnersPositions;
         runnerUpsPositions.sort(numberOrder);
         runnerUpsPositions = runnerUpsPositions;
@@ -74,26 +85,40 @@
   </div>
   {#if players.length > 0}
     <div class="rounded-lg mt-4 mx-2 py-4 px-4 elevation-3">
-      <h2 class="text-lg font-medium mb-2">Winners' Positions</h2>
+      <h2 class="text-lg font-medium mr-2 flex items-center justify-between">
+        Winners' Positions
+        <div class="ml-6">
+          <Checkbox
+            label="Ascending"
+            color="text-orange-600"
+            bind:checked={sorted} />
+        </div>
+      </h2>
       <div class="flex flex-wrap">
-        {#each winnersPositions as pos}
-          <div class="mr-5">{pos}</div>
+        {#each winnersPositionDisplay as pos, i}
+          <div class="" class:mr-10={i % 4 === 3}>
+            <div class="w-8 text-right">{pos}</div>
+          </div>
         {/each}
       </div>
     </div>
     <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3">
       <h2 class="text-lg font-medium mb-2">Runner-Ups' Positions</h2>
       <div class="flex flex-wrap">
-        {#each runnerUpsPositions as pos}
-          <div class="mr-5">{pos}</div>
+        {#each runnerUpsPositions as pos, i}
+          <div class="" class:mr-10={i % 4 === 3}>
+            <div class="w-8 text-right">{pos}</div>
+          </div>
         {/each}
       </div>
     </div>
     <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3">
       <h2 class="text-lg font-medium mb-2">Byes' Positions</h2>
       <div class="flex flex-wrap">
-        {#each byesPositions as pos}
-          <div class="mr-5">{pos}</div>
+        {#each byesPositions as pos, i}
+          <div class="" class:mr-10={i % 4 === 3}>
+            <div class="w-8 text-right">{pos}</div>
+          </div>
         {/each}
       </div>
     </div>
