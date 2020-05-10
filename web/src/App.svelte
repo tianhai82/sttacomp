@@ -24,3 +24,18 @@
   </button> -->
 </div>
 <svelte:component this={component} />
+<footer class="fixed w-full bottom-0 bg-red-100 border-t border-b border-red-300 elevation-5">
+  <div class="h-4 flex items-center justify-center text-xs">
+    Icons made by
+    <a
+      href="https://www.flaticon.com/authors/freepik"
+      class="mx-1"
+      title="Freepik">
+      Freepik
+    </a>
+    from
+    <a href="https://www.flaticon.com/" class="mx-1" title="Flaticon">
+      www.flaticon.com
+    </a>
+  </div>
+</footer>
