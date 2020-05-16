@@ -21,20 +21,24 @@ func (ctl *DrawApiController) CalculateDraw(c *gin.Context) {
 	winnersCount, err := strconv.Atoi(winners)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
+		c.Data(http.StatusBadRequest, "text/plain", []byte("Invalid input"))
 		return
 	}
 	runnerUpsCount, err := strconv.Atoi(runnerUps)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
+		c.Data(http.StatusBadRequest, "text/plain", []byte("Invalid input"))
 		return
 	}
 	if winnersCount < runnerUpsCount {
 		c.AbortWithError(http.StatusBadRequest, errors.New("runner ups cannot be more than winners"))
+		c.Data(http.StatusBadRequest, "text/plain", []byte("No of runner ups cannot be more than winners"))
 		return
 	}
 	rounds, err := draw.CalcRound(winnersCount + runnerUpsCount)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
+		c.Data(http.StatusBadRequest, "text/plain", []byte(err.Error()))
 		return
 	}
 	byesCount := rounds - winnersCount - runnerUpsCount

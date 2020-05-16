@@ -2322,7 +2322,7 @@ fsevents@~2.1.2:
     sirv-cli: ^0.4.4
     svelte: ^3.0.0
     svelte-preprocess: ^3.2.0-alpha.2
-    svetamat: ^0.4.9
+    svetamat: ^0.4.15
     tailwindcss: ^1.1.3
     tailwindcss-elevation: ^0.3.3
     wretch: ^1.7.2
@@ -2390,14 +2390,14 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"svetamat@npm:^0.4.9":
-  version: 0.4.9
-  resolution: "svetamat@npm:0.4.9"
+"svetamat@npm:^0.4.15":
+  version: 0.4.15
+  resolution: "svetamat@npm:0.4.15"
   peerDependencies:
     svelte: ^3.0.0
     tailwindcss: ^1.1.3
     tailwindcss-elevation: ^0.3.3
-  checksum: 2/fdf82dc824c3dc765f145b13950ed801508459f6d378cec28a8d61ae1fda30126d42e641bb10602e8e17098b80ed198efcef6784ecde31a907b671b5cddf82a0
+  checksum: 2/1c6a1ef1623d843ee6ed9966676f957ca22cd82e306f734e603df3e19802164359d2ff5056a6972ce83f095cf85a68b382717da8a7af468853d0ce61f2b7195f
   languageName: node
   linkType: hard
 

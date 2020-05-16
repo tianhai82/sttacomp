@@ -1,5 +1,5 @@
 <script>
-  import { Input, Button, Checkbox } from "svetamat";
+  import { Input, Button, Checkbox, Spinner } from "svetamat";
   import { calculateDraws } from "../apis/draw";
   import Knockout from "../components/Knockout.svelte";
 
@@ -39,37 +39,37 @@
   function numberOrder(a, b) {
     return a - b;
   }
+  let calculatePromise;
   function calculate() {
-    calculateDraws({ winners, runnerups })
-      .then(data => {
-        round = data.rounds;
-        players = [];
-        winnersPositions = [];
-        runnerUpsPositions = [];
-        byesPositions = [];
-        for (let i = 0; i < round; i++) {
-          players.push(`${i + 1}`);
-        }
-        data.byes.forEach((pos, i) => {
-          players[pos - 1] = `${pos}: BYE ${i + 1}`;
-          byesPositions.push(pos);
-        });
-        data.winners.forEach((pos, i) => {
-          players[pos - 1] = `${pos}: Winner: ${i + 1}`;
-          winnersPositions.push(pos);
-        });
-        data.runnerups.forEach((pos, i) => {
-          players[pos - 1] = `${pos}: Runner-up: ${i + 1}`;
-          runnerUpsPositions.push(pos);
-        });
-        players = players;
-        winnersPositions = winnersPositions;
-        runnerUpsPositions.sort(numberOrder);
-        runnerUpsPositions = runnerUpsPositions;
-        byesPositions.sort(numberOrder);
-        byesPositions = byesPositions;
-      })
-      .catch(err => console.log(err));
+    players = [];
+    winnersPositions = [];
+    runnerUpsPositions = [];
+    byesPositions = [];
+    round = 0;
+    calculatePromise = calculateDraws({ winners, runnerups }).then(data => {
+      round = data.rounds;
+      for (let i = 0; i < round; i++) {
+        players.push(`${i + 1}`);
+      }
+      data.byes.forEach((pos, i) => {
+        players[pos - 1] = `${pos}: BYE ${i + 1}`;
+        byesPositions.push(pos);
+      });
+      data.winners.forEach((pos, i) => {
+        players[pos - 1] = `${pos}: Winner: ${i + 1}`;
+        winnersPositions.push(pos);
+      });
+      data.runnerups.forEach((pos, i) => {
+        players[pos - 1] = `${pos}: Runner-up: ${i + 1}`;
+        runnerUpsPositions.push(pos);
+      });
+      players = players;
+      winnersPositions = winnersPositions;
+      runnerUpsPositions.sort(numberOrder);
+      runnerUpsPositions = runnerUpsPositions;
+      byesPositions.sort(numberOrder);
+      byesPositions = byesPositions;
+    });
   }
 </script>
 
@@ -97,57 +97,71 @@
       Calculate
     </Button>
   </div>
-  {#if players.length > 0}
-    <div class="rounded-lg mt-4 mx-2 py-4 px-4 elevation-3 bg-green-100">
-      <h2
-        class="sm:text-lg text-base font-medium mr-2 flex items-center
-        justify-between">
-        Winners' Positions
-        <div class="ml-6">
-          <Checkbox
-            label="Ascending"
-            color="text-orange-600"
-            bind:checked={sorted} />
+  {#await calculatePromise}
+    <div
+      class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-blue-100 flex items-center">
+      <Spinner />
+      <div class="ml-4">Calculation in progress...</div>
+    </div>
+  {:then}
+    {#if players.length > 0}
+      <div class="rounded-lg mt-4 mx-2 py-4 px-4 elevation-3 bg-green-100">
+        <h2
+          class="sm:text-lg text-base font-medium mr-2 flex items-center
+          justify-between">
+          Winners' Positions
+          <div class="ml-6">
+            <Checkbox
+              label="Ascending"
+              color="text-orange-600"
+              bind:checked={sorted} />
+          </div>
+        </h2>
+        <div class="flex flex-wrap">
+          {#each winnersGrpsOf4 as grp, i}
+            <div class="mr-12 flex">
+              {#each grp as pos}
+                <div class="w-12 text-right tracking-tight">{pos}</div>
+              {/each}
+            </div>
+          {/each}
         </div>
-      </h2>
-      <div class="flex flex-wrap">
-        {#each winnersGrpsOf4 as grp, i}
-          <div class="mr-12 flex">
-            {#each grp as pos}
-              <div class="w-12 text-right tracking-tight">{pos}</div>
-            {/each}
-          </div>
-        {/each}
       </div>
-    </div>
-    <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3 bg-orange-100">
-      <h2 class="sm:text-lg text-base font-medium mb-2">
-        Runner-Ups' Positions
-      </h2>
-      <div class="flex flex-wrap">
-        {#each runnerUpsGrpsOf4 as grp, i}
-          <div class="mr-12 flex">
-            {#each grp as pos}
-              <div class="w-12 text-right tracking-tight">{pos}</div>
-            {/each}
-          </div>
-        {/each}
+      <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3 bg-orange-100">
+        <h2 class="sm:text-lg text-base font-medium mb-2">
+          Runner-Ups' Positions
+        </h2>
+        <div class="flex flex-wrap">
+          {#each runnerUpsGrpsOf4 as grp, i}
+            <div class="mr-12 flex">
+              {#each grp as pos}
+                <div class="w-12 text-right tracking-tight">{pos}</div>
+              {/each}
+            </div>
+          {/each}
+        </div>
       </div>
-    </div>
-    <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3 bg-gray-200">
-      <h2 class="sm:text-lg text-base font-medium mb-2">Byes' Positions</h2>
-      <div class="flex flex-wrap">
-        {#each byesGrpsOf4 as grp, i}
-          <div class="mr-12 flex">
-            {#each grp as pos}
-              <div class="w-12 text-right tracking-tight">{pos}</div>
-            {/each}
-          </div>
-        {/each}
+      <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3 bg-gray-200">
+        <h2 class="sm:text-lg text-base font-medium mb-2">Byes' Positions</h2>
+        <div class="flex flex-wrap">
+          {#each byesGrpsOf4 as grp, i}
+            <div class="mr-12 flex">
+              {#each grp as pos}
+                <div class="w-12 text-right tracking-tight">{pos}</div>
+              {/each}
+            </div>
+          {/each}
+        </div>
       </div>
+      <div class="rounded-lg my-4 mx-2 py-4 px-4 elevation-3 overflow-x-auto">
+        <Knockout {round} {players} />
+      </div>
+    {/if}
+  {:catch e}
+    <div
+      class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-red-100 flex items-center">
+      <span class="material-icons text-red-500">error</span>
+      <div class="ml-4">{e.message}</div>
     </div>
-    <div class="rounded-lg my-4 mx-2 py-4 px-4 elevation-3 overflow-x-auto">
-      <Knockout {round} {players} />
-    </div>
-  {/if}
+  {/await}
 </div>

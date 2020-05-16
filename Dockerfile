@@ -15,7 +15,7 @@ RUN go mod download
 COPY . ./
 
 # Build the binary.
-RUN CGO_ENABLED=0 GOOS=linux go build -mod=readonly -v -o server
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -trimpath -mod=readonly -v -o server
 
 # FROM node:10.10-alpine as web-builder
 # WORKDIR /app/web

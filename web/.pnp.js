@@ -49,7 +49,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["sirv-cli", "npm:0.4.5"],
             ["svelte", "npm:3.22.2"],
             ["svelte-preprocess", "virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:3.7.4"],
-            ["svetamat", "virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:0.4.9"],
+            ["svetamat", "virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:0.4.15"],
             ["tailwindcss", "npm:1.4.5"],
             ["tailwindcss-elevation", "npm:0.3.4"],
             ["wretch", "npm:1.7.2"]
@@ -2670,7 +2670,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["sirv-cli", "npm:0.4.5"],
             ["svelte", "npm:3.22.2"],
             ["svelte-preprocess", "virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:3.7.4"],
-            ["svetamat", "virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:0.4.9"],
+            ["svetamat", "virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:0.4.15"],
             ["tailwindcss", "npm:1.4.5"],
             ["tailwindcss-elevation", "npm:0.3.4"],
             ["wretch", "npm:1.7.2"]
@@ -2730,10 +2730,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["svetamat", [
-        ["virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:0.4.9", {
-          "packageLocation": "./.yarn/unplugged/svetamat-virtual-98990956e0/node_modules/svetamat/",
+        ["virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:0.4.15", {
+          "packageLocation": "./.yarn/unplugged/svetamat-virtual-a207271e62/node_modules/svetamat/",
           "packageDependencies": [
-            ["svetamat", "virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:0.4.9"],
+            ["svetamat", "virtual:9d24961afe4ab7c180d08ddcdf3b0d15b96e652f3af47c64b64522901d32b469f1e3b670323fd04196bb6f456f48ce444f0745e16a04e5684d7a7fab996bc43d#npm:0.4.15"],
             ["svelte", "npm:3.22.2"],
             ["tailwindcss", "npm:1.4.5"],
             ["tailwindcss-elevation", "npm:0.3.4"]

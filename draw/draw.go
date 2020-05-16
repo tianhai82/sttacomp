@@ -28,8 +28,8 @@ func (a *IntArray) Remove(ia ...int) {
 }
 
 func CalcRound(players int) (int, error) {
-	if players < 2 {
-		return 0, errors.New("players count must be more than 2")
+	if players <= 2 {
+		return 0, errors.New("Total no. of players must be more than 2")
 	}
 	round := 2
 	for {
