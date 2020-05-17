@@ -24,9 +24,19 @@ func (ctl *DrawApiController) CalculateDraw(c *gin.Context) {
 		c.Data(http.StatusBadRequest, "text/plain", []byte("Invalid input"))
 		return
 	}
+	if winnersCount <= 0 {
+		c.Abort()
+		c.Data(http.StatusBadRequest, "text/plain", []byte("Invalid input"))
+		return
+	}
 	runnerUpsCount, err := strconv.Atoi(runnerUps)
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
+		c.Data(http.StatusBadRequest, "text/plain", []byte("Invalid input"))
+		return
+	}
+	if runnerUpsCount < 0 {
+		c.Abort()
 		c.Data(http.StatusBadRequest, "text/plain", []byte("Invalid input"))
 		return
 	}

@@ -40,61 +40,10 @@ func CalcRound(players int) (int, error) {
 	}
 }
 
-// func drawGetRestHandler(w http.ResponseWriter, r *http.Request) {
-// 	params := mux.Vars(r)
-// 	rounds, _ := strconv.Atoi(params["rounds"])
-// 	winners, _ := strconv.Atoi(params["winners"])
-// 	runnerups, _ := strconv.Atoi(params["runnerups"])
-// 	byes := rounds - winners - runnerups
-// 	if (byes < 0) || (rounds < winners) || (rounds < runnerups) || (rounds < (runnerups + winners)) {
-// 		http.Error(w, "Ensure that your inputs are valid", http.StatusInternalServerError)
-// 		return
-// 	}
-// 	pos := make([]int, rounds, rounds)
-// 	for i := 0; i < len(pos); i++ {
-// 		pos[i] = i + 1
-// 	}
-// 	seeds := PrintSeeds(pos)
-// 	var byelist []int
-// 	var err error = nil
-// 	var runnerList []int
-// 	all := NewIntArray(seeds)
-// 	if runnerups > 0 {
-// 		if byes > winners {
-// 			byelist, err = GetByesFromWinnerAdjacent(seeds, winners)
-// 			if err != nil {
-// 				http.Error(w, err.Error(), http.StatusInternalServerError)
-// 				return
-// 			}
-// 			all.Remove(seeds[:winners]...)
-// 			all.Remove(byelist...)
-// 			runnerList = append(runnerList, all.array[:runnerups]...)
-// 			all.Remove(runnerList...)
-// 			byelist = append(byelist, all.array...)
-// 		} else {
-// 			byelist = GetByes(pos)[:byes]
-// 			all.Remove(seeds[:winners]...)
-// 			all.Remove(byelist...)
-// 			runnerList = append(runnerList, all.array[:runnerups]...)
-// 		}
-
-// 	} else {
-// 		all.Remove(seeds[0:winners]...)
-// 		byelist = all.array
-// 	}
-
-// 	w.Header().Set("Content-Type", "application/json")
-// 	enc := json.NewEncoder(w)
-// 	if err := enc.Encode(map[string][]int{"winners": seeds[0:winners], "runnerups": runnerList, "byes": byelist}); err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
-
 func GetRunnerupsAndByes(pos, seedingOrder []int, runnerUpsCount, winnersCount, byesCount int) ([]int, []int, error) {
 	var byelist []int
 	var err error = nil
-	var runnerList []int
+	runnerList := make([]int, 0)
 	all := NewIntArray(seedingOrder)
 	if runnerUpsCount > 0 {
 		if byesCount >= winnersCount {

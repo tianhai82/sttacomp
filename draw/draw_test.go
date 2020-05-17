@@ -1,6 +1,7 @@
 package draw
 
 import (
+	"sort"
 	"testing"
 )
 
@@ -15,6 +16,153 @@ func TestGetByes(t *testing.T) {
 		t.Log(round, "Passed")
 		round *= 2
 	}
+}
+
+type req struct {
+	Winner   int
+	Runnerup int
+}
+type resp struct {
+	Winners   []int
+	Runnerups []int
+	Byes      []int
+}
+
+var expected = map[req]resp{
+	{2, 1}: {
+		[]int{1, 4},
+		[]int{3},
+		[]int{2},
+	},
+	{2, 2}: {
+		[]int{1, 4},
+		[]int{2, 3},
+		[]int{},
+	},
+	{3, 2}: {
+		[]int{1, 8, 5},
+		[]int{3, 4},
+		[]int{2, 6, 7},
+	},
+	{3, 3}: {
+		[]int{1, 8, 5},
+		[]int{3, 4, 6},
+		[]int{2, 7},
+	},
+	{4, 3}: {
+		[]int{1, 8, 5, 4},
+		[]int{3, 7, 6},
+		[]int{2},
+	},
+	{4, 4}: {
+		[]int{1, 8, 5, 4},
+		[]int{2, 3, 7, 6},
+		[]int{},
+	},
+	{5, 4}: {
+		[]int{1, 8, 9, 12, 16},
+		[]int{4, 5, 6, 13},
+		[]int{2, 3, 7, 10, 11, 14, 15},
+	},
+	{5, 5}: {
+		[]int{1, 8, 9, 12, 16},
+		[]int{4, 5, 6, 13, 14},
+		[]int{2, 3, 7, 10, 11, 15},
+	},
+	{6, 5}: {
+		[]int{1, 5, 8, 9, 12, 16},
+		[]int{3, 4, 11, 13, 14},
+		[]int{2, 7, 6, 10, 15},
+	},
+	{6, 6}: {
+		[]int{1, 5, 8, 9, 12, 16},
+		[]int{3, 4, 6, 11, 13, 14},
+		[]int{2, 7, 10, 15},
+	},
+	{7, 6}: {
+		[]int{1, 5, 8, 9, 12, 13, 16},
+		[]int{3, 4, 6, 10, 11, 14},
+		[]int{2, 7, 15},
+	},
+	{7, 7}: {
+		[]int{1, 5, 8, 9, 12, 13, 16},
+		[]int{3, 4, 6, 7, 10, 11, 14},
+		[]int{2, 15},
+	},
+	{8, 7}: {
+		[]int{1, 4, 5, 8, 9, 12, 13, 16},
+		[]int{3, 6, 7, 10, 11, 14, 15},
+		[]int{2},
+	},
+	{8, 8}: {
+		[]int{1, 4, 5, 8, 9, 12, 13, 16},
+		[]int{2, 3, 6, 7, 10, 11, 14, 15},
+		[]int{},
+	},
+}
+
+func TestCalc(t *testing.T) {
+	for request, expectedResponse := range expected {
+		calResp, err := testReqCal(request)
+		if err != nil {
+			t.Error(err)
+		}
+		if !respIsEqual(expectedResponse, calResp) {
+			sort.Ints(calResp.Runnerups)
+			sort.Ints(calResp.Winners)
+			sort.Ints(calResp.Byes)
+			t.Error("\n", request, "\nexpected\t", expectedResponse, "\ngotten\t\t", calResp)
+		}
+	}
+}
+
+func respIsEqual(resp1 resp, resp2 resp) bool {
+	if !sameInts(resp1.Byes, resp2.Byes) {
+		return false
+	}
+	if !sameInts(resp1.Winners, resp2.Winners) {
+		return false
+	}
+	if !sameInts(resp1.Runnerups, resp2.Runnerups) {
+		return false
+	}
+	return true
+}
+
+func sameInts(a []int, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	sort.Ints(a)
+	sort.Ints(b)
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func testReqCal(request req) (resp, error) {
+	rounds, err := CalcRound(request.Winner + request.Runnerup)
+	if err != nil {
+		return resp{}, err
+	}
+	byesCount := rounds - request.Winner - request.Runnerup
+	pos := make([]int, rounds, rounds)
+	for i := 0; i < len(pos); i++ {
+		pos[i] = i + 1
+	}
+	seedingOrder := GetSeedingOrder(pos)
+	runnerUpsList, byeList, err := GetRunnerupsAndByes(pos, seedingOrder, request.Runnerup, request.Winner, byesCount)
+	if err != nil {
+		return resp{}, err
+	}
+	return resp{
+		Byes:      byeList,
+		Runnerups: runnerUpsList,
+		Winners:   seedingOrder[:request.Winner],
+	}, nil
 }
 
 func testGetByesRound(round int) bool {

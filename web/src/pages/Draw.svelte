@@ -51,8 +51,8 @@
       for (let i = 0; i < round; i++) {
         players.push(`${i + 1}`);
       }
-      data.byes.forEach((pos, i) => {
-        players[pos - 1] = `${pos}: BYE ${i + 1}`;
+      data.byes.forEach(pos => {
+        players[pos - 1] = `${pos}: BYE`;
         byesPositions.push(pos);
       });
       data.winners.forEach((pos, i) => {
@@ -127,20 +127,22 @@
           {/each}
         </div>
       </div>
-      <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3 bg-orange-100">
-        <h2 class="sm:text-lg text-base font-medium mb-2">
-          Runner-Ups' Positions
-        </h2>
-        <div class="flex flex-wrap">
-          {#each runnerUpsGrpsOf4 as grp, i}
-            <div class="mr-12 flex">
-              {#each grp as pos}
-                <div class="w-12 text-right tracking-tight">{pos}</div>
-              {/each}
-            </div>
-          {/each}
+      {#if runnerUpsGrpsOf4.length > 0}
+        <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3 bg-orange-100">
+          <h2 class="sm:text-lg text-base font-medium mb-2">
+            Runner-Ups' Positions
+          </h2>
+          <div class="flex flex-wrap">
+            {#each runnerUpsGrpsOf4 as grp, i}
+              <div class="mr-12 flex">
+                {#each grp as pos}
+                  <div class="w-12 text-right tracking-tight">{pos}</div>
+                {/each}
+              </div>
+            {/each}
+          </div>
         </div>
-      </div>
+      {/if}
       <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3 bg-gray-200">
         <h2 class="sm:text-lg text-base font-medium mb-2">Byes' Positions</h2>
         <div class="flex flex-wrap">
