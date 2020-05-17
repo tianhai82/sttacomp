@@ -8,3 +8,5 @@
 ## 3. Deploy static files to Firebase
 - RUN `yarn build` locally in web folder
 - Run `firebase deploy`
+
+## 4. Remove files in Google Cloud Storage buckets
