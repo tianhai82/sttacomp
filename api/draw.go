@@ -40,6 +40,11 @@ func (ctl *DrawApiController) CalculateDraw(c *gin.Context) {
 		c.Data(http.StatusBadRequest, "text/plain", []byte("Invalid input"))
 		return
 	}
+	if runnerUpsCount > 0 && runnerUpsCount != winnersCount {
+		c.Abort()
+		c.Data(http.StatusBadRequest, "text/plain", []byte("No. of runner-ups must be either 0 or equal to the no. of winners"))
+		return
+	}
 	if winnersCount < runnerUpsCount {
 		c.AbortWithError(http.StatusBadRequest, errors.New("runner ups cannot be more than winners"))
 		c.Data(http.StatusBadRequest, "text/plain", []byte("No of runner ups cannot be more than winners"))
