@@ -40,12 +40,12 @@ var expected = map[req]resp{
 		[]int{},
 	},
 	{3, 2}: {
-		[]int{1, 8, 5},
+		[]int{1, 5, 8},
 		[]int{3, 4},
 		[]int{2, 6, 7},
 	},
 	{3, 3}: {
-		[]int{1, 8, 5},
+		[]int{1, 5, 8},
 		[]int{3, 4, 6},
 		[]int{2, 7},
 	},
@@ -101,6 +101,23 @@ var expected = map[req]resp{
 	},
 }
 
+// func Test2ndMethod(t *testing.T) {
+// 	for winner := 9; winner <= 16; winner++ {
+// 		for runnerup := winner - 1; runnerup <= winner; runnerup++ {
+// 			request := req{
+// 				Winner:   winner,
+// 				Runnerup: runnerup,
+// 			}
+// 			_, method, err := testReqCal(request)
+// 			if err != nil {
+// 				t.Log(err.Error())
+// 				continue
+// 			}
+// 			t.Logf("Winner: %d. RunnerUp: %d. Method: %d\n", winner, runnerup, method)
+// 		}
+// 	}
+// }
+
 func TestCalc(t *testing.T) {
 	for request, expectedResponse := range expected {
 		calResp, err := testReqCal(request)
@@ -154,7 +171,7 @@ func testReqCal(request req) (resp, error) {
 		pos[i] = i + 1
 	}
 	seedingOrder := GetSeedingOrder(pos)
-	runnerUpsList, byeList, err := GetRunnerupsAndByes(pos, seedingOrder, request.Runnerup, request.Winner, byesCount)
+	_, runnerUpsList, byeList, err := GetWinnersRunnerupsAndByes(pos, seedingOrder, request.Runnerup, request.Winner, byesCount)
 	if err != nil {
 		return resp{}, err
 	}

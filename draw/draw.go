@@ -40,37 +40,102 @@ func CalcRound(players int) (int, error) {
 	}
 }
 
-func GetRunnerupsAndByes(pos, seedingOrder []int, runnerUpsCount, winnersCount, byesCount int) ([]int, []int, error) {
+func GetWinnersRunnerupsAndByes(pos, seedingOrder []int, runnerUpsCount, winnersCount, byesCount int) ([]int, []int, []int, error) {
 	var byelist []int
-	var err error = nil
+	var err error
 	runnerList := make([]int, 0)
+	winnerList := make([]int, 0)
 	all := NewIntArray(seedingOrder)
 	if runnerUpsCount > 0 {
-		if byesCount >= winnersCount {
-			byelist, err = GetByesFromWinnerAdjacent(seedingOrder, winnersCount)
+		byelist = GetByes(pos)[:byesCount]
+		all.Remove(seedingOrder[:winnersCount]...)
+		all.Remove(byelist...)
+		runnerList = append(runnerList, all.array[:runnerUpsCount]...)
+		winnerList = seedingOrder[:winnersCount]
+
+		if anyGotBye(runnerList, byelist) && !allGotBye(seedingOrder[:winnersCount], byelist) {
+			/**
+			the code below gives each winner a bye if enough.
+			Remove the winners and byes from all the positions.
+			The rest of the positions are for runnerups
+			*/
+			all = NewIntArray(seedingOrder)
+			runnerList = make([]int, 0)
+			byelist, err = GetAdjacentPositions(winnerList, smallerOf(winnersCount, byesCount))
 			if err != nil {
-				return nil, nil, err
+				return nil, nil, nil, err
 			}
-			all.Remove(seedingOrder[:winnersCount]...)
+			all.Remove(winnerList...)
 			all.Remove(byelist...)
 			runnerList = append(runnerList, all.array[:runnerUpsCount]...)
 			all.Remove(runnerList...)
 			byelist = append(byelist, all.array...)
-		} else {
-			byelist = GetByes(pos)[:byesCount]
-			all.Remove(seedingOrder[:winnersCount]...)
-			all.Remove(byelist...)
-			runnerList = append(runnerList, all.array[:runnerUpsCount]...)
+			/** -- the below commented code follows ITTF bye position --
+			all := NewIntArray(seedingOrder)
+			byesRanked := GetByes(pos)
+			winnerList, err = GetAdjacentPositions(byesRanked, winnersCount)
+			if err != nil {
+				return nil, nil, nil, err
+			}
+			byeList := byesRanked[:byesCount]
+			all.Remove(winnerList...)
+			all.Remove(byeList...)
+			runnerList = all.array
+			*/
 		}
 
 	} else {
 		all.Remove(seedingOrder[0:winnersCount]...)
 		byelist = all.array
 	}
-	return runnerList, byelist, nil
+	return winnerList, runnerList, byelist, nil
 }
 
-func GetByesFromWinnerAdjacent(pos []int, bye int) ([]int, error) {
+func smallerOf(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func anyGotBye(pos []int, byes []int) bool {
+	for i := range pos {
+		bye := 0
+		if (pos[i] % 2) == 0 {
+			bye = pos[i] - 1
+		} else {
+			bye = pos[i] + 1
+		}
+		if containsInt(byes, bye) {
+			return true
+		}
+	}
+	return false
+}
+func allGotBye(pos []int, byes []int) bool {
+	for i := range pos {
+		bye := 0
+		if (pos[i] % 2) == 0 {
+			bye = pos[i] - 1
+		} else {
+			bye = pos[i] + 1
+		}
+		if !containsInt(byes, bye) {
+			return false
+		}
+	}
+	return true
+}
+func containsInt(arr []int, a int) bool {
+	for _, b := range arr {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
+func GetAdjacentPositions(pos []int, bye int) ([]int, error) {
 	if bye > len(pos) {
 		return nil, errors.New("Bye positions more than total number of positions in first round")
 	}
