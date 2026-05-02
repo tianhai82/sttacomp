@@ -63,7 +63,7 @@
             {#each quarter as eighth, ei}
               <div class="flex flex-col gap-1 rounded p-1">
                 {#each eighth as group, gi}
-                  <div class="flex flex-col border border-gray-200 rounded shadow-sm overflow-hidden {gi % 2 === 0 ? 'bg-white' : 'bg-gray-100'}">
+                  <div class="flex flex-col border border-gray-200 rounded shadow-sm overflow-hidden {(ei * 2 + gi) === 1 || (ei * 2 + gi) === 2 ? 'bg-gray-100' : 'bg-white'}">
                     {#each group as player, i}
                       <div class="flex items-center h-6 text-sm text-gray-800 {i > 0 ? 'border-t border-gray-100' : ''}">
                         <span class="bg-gray-100 font-bold min-w-[24px] h-full flex items-center justify-center border-r border-gray-200 text-gray-700 text-sm">{player.pos}</span>
