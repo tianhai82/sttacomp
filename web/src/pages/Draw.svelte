@@ -1,6 +1,6 @@
 <script>
   import { Input, Button, Checkbox, Spinner } from "svetamat";
-  import { calculateDraws } from "../apis/draw";
+  import { calculateDraws } from "../lib/calculateDraw";
   import SplitDraw from "../components/SplitDraw.svelte";
 
   let winners = 20;
