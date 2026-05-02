@@ -7,6 +7,6 @@ Last updated: 2026-05-02T12:00:00Z
 
 | # | Status | Task | Commit |
 |---|--------|------|--------|
-| 1 | ⬜ pending | Create SplitDraw.svelte component | — |
-| 2 | ⬜ pending | Wire SplitDraw into Draw.svelte and add dark background | — |
-| 3 | ⬜ pending | Verify with dev server and clean up old components | — |
+| 1 | ✅ done | Create SplitDraw.svelte component | 6565635 |
+| 2 | ✅ done | Wire SplitDraw into Draw.svelte and add dark background | f68d7ce |
+| 3 | 🔄 in-progress | Verify with dev server and clean up old components | — |
