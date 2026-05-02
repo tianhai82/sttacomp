@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap');
+
+  body {
+    font-family: 'Oswald', sans-serif;
+    padding: 8px;
+    background: radial-gradient(circle at center, #233c2d 0%, #101c15 100%);
+    color: #fff;
+    min-height: 100vh;
+  }
+  h2 { text-align: center; margin-bottom: 2px; letter-spacing: 1px; color: #fff; text-transform: uppercase; font-size: 18px; }
+  .subtitle { text-align: center; color: #aaa; margin-bottom: 8px; font-size: 11px; font-family: sans-serif; }
+  
+  .halves { display: flex; gap: 20px; justify-content: center; align-items: flex-start; }
+  .half { display: flex; flex-direction: column; align-items: center; width: 260px; }
+  .half-label { font-size: 14px; font-weight: bold; color: #eee; margin-bottom: 8px; letter-spacing: 1px; }
+  
+  .quarters { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+  
+  .quarter {
+    display: flex; flex-direction: column; gap: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 4px;
+  }
+  
+  .eighth {
+    display: flex; flex-direction: column; gap: 2px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 2px;
+  }
+  
+  .group {
+    display: flex; flex-direction: column;
+    background: linear-gradient(to bottom, #ffffff 0%, #e2e8f0 100%);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    border: 1px solid #94a3b8;
+  }
+  
+  .player {
+    display: flex; align-items: center;
+    height: 19px;
+    font-size: 11px;
+    color: #0f172a;
+    background: transparent !important;
+  }
+  .player + .player {
+    border-top: 1px solid #cbd5e1;
+  }
+  
+  .pos {
+    order: 1;
+    background: linear-gradient(to bottom, #fde047, #eab308);
+    font-weight: 700;
+    min-width: 22px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #94a3b8;
+    color: #000;
+    font-size: 11px;
+  }
+  
+  .country {
+    order: 2;
+    font-size: 8px;
+    font-weight: 700;
+    background: #064e3b;
+    color: #fff !important;
+    padding: 1px 3px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    margin-left: 6px;
+    font-family: sans-serif;
+  }
+  
+  .name {
+    order: 3;
+    flex: 1;
+    font-weight: 700;
+    padding-left: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bye .name { color: #64748b; font-style: italic; text-transform: none; font-weight: 500; }
+  .bye .country { display: none; }
+</style>
+</head>
+<body>
+
+<h2>64-Position Draw — Split View</h2>
+<p class="subtitle">Outer = quarter · Middle = eighth · Inner = group of 4</p>
+
+<div class="halves">
+  <!-- TOP HALF -->
+  <div class="half">
+    <div class="half-label">TOP HALF</div>
+    <div class="quarters">
+      <!-- Q1: 1-16 -->
+      <div class="quarter">
+        <div class="eighth">
+          <div class="group">
+            <div class="player q1-s1"><span class="pos">1</span><span class="name">Wang Chuqin</span><span class="country">CHN</span></div>
+            <div class="player q1-s1"><span class="pos">2</span><span class="name">Hugo Calderano</span><span class="country">BRA</span></div>
+            <div class="player q1-s1"><span class="pos">3</span><span class="name">Tomokazu Harimoto</span><span class="country">JPN</span></div>
+            <div class="player q1-s1"><span class="pos">4</span><span class="name">Lim Jonghoon</span><span class="country">KOR</span></div>
+          </div>
+          <div class="group">
+            <div class="player q1-s2"><span class="pos">5</span><span class="name">Truls Moregard</span><span class="country">SWE</span></div>
+            <div class="player q1-s2"><span class="pos">6</span><span class="name">Dang Qiu</span><span class="country">GER</span></div>
+            <div class="player q1-s2"><span class="pos">7</span><span class="name">Felix Lebrun</span><span class="country">FRA</span></div>
+            <div class="player q1-s2"><span class="pos">8</span><span class="name">Lin Yun-ju</span><span class="country">TPE</span></div>
+          </div>
+        </div>
+        <div class="eighth">
+          <div class="group">
+            <div class="player q1-s3"><span class="pos">9</span><span class="name">Kwan Kit Ho</span><span class="country">HKG</span></div>
+            <div class="player q1-s3"><span class="pos">10</span><span class="name">Omar Assar</span><span class="country">EGY</span></div>
+            <div class="player q1-s3"><span class="pos">11</span><span class="name">Sathiyan Gnanasekaran</span><span class="country">IND</span></div>
+            <div class="player q1-s3"><span class="pos">12</span><span class="name">Jonathan Groth</span><span class="country">DEN</span></div>
+          </div>
+          <div class="group">
+            <div class="player q1-s4"><span class="pos">13</span><span class="name">Andrej Gacina</span><span class="country">CRO</span></div>
+            <div class="player q1-s4"><span class="pos">14</span><span class="name">Panagiotis Gionis</span><span class="country">GRE</span></div>
+            <div class="player q1-s4 bye"><span class="pos">15</span><span class="name">BYE</span><span class="country"></span></div>
+            <div class="player q1-s4 bye"><span class="pos">16</span><span class="name">BYE</span><span class="country"></span></div>
+          </div>
+        </div>
+      </div>
+      <!-- Q2: 17-32 -->
+      <div class="quarter">
+        <div class="eighth">
+          <div class="group">
+            <div class="player q2-s1"><span class="pos">17</span><span class="name">Ma Long</span><span class="country">CHN</span></div>
+            <div class="player q2-s1"><span class="pos">18</span><span class="name">Timo Boll</span><span class="country">GER</span></div>
+            <div class="player q2-s1"><span class="pos">19</span><span class="name">Koki Niwa</span><span class="country">JPN</span></div>
+            <div class="player q2-s1"><span class="pos">20</span><span class="name">Jang Woojin</span><span class="country">KOR</span></div>
+          </div>
+          <div class="group">
+            <div class="player q2-s2"><span class="pos">21</span><span class="name">Mattias Falck</span><span class="country">SWE</span></div>
+            <div class="player q2-s2"><span class="pos">22</span><span class="name">Patrick Franziska</span><span class="country">GER</span></div>
+            <div class="player q2-s2"><span class="pos">23</span><span class="name">Simon Gauzy</span><span class="country">FRA</span></div>
+            <div class="player q2-s2"><span class="pos">24</span><span class="name">Chuang Chih-yuan</span><span class="country">TPE</span></div>
+          </div>
+        </div>
+        <div class="eighth">
+          <div class="group">
+            <div class="player q2-s3"><span class="pos">25</span><span class="name">Wong Chun Ting</span><span class="country">HKG</span></div>
+            <div class="player q2-s3"><span class="pos">26</span><span class="name">Ahmed Saleh</span><span class="country">EGY</span></div>
+            <div class="player q2-s3"><span class="pos">27</span><span class="name">Sharath Kamal</span><span class="country">IND</span></div>
+            <div class="player q2-s3"><span class="pos">28</span><span class="name">Michael Maze</span><span class="country">DEN</span></div>
+          </div>
+          <div class="group">
+            <div class="player q2-s4"><span class="pos">29</span><span class="name">Tiago Apolonia</span><span class="country">POR</span></div>
+            <div class="player q2-s4"><span class="pos">30</span><span class="name">Daniel Habesohn</span><span class="country">AUT</span></div>
+            <div class="player q2-s4 bye"><span class="pos">31</span><span class="name">BYE</span><span class="country"></span></div>
+            <div class="player q2-s4 bye"><span class="pos">32</span><span class="name">BYE</span><span class="country"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM HALF -->
+  <div class="half">
+    <div class="half-label">BOTTOM HALF</div>
+    <div class="quarters">
+      <!-- Q3: 33-48 -->
+      <div class="quarter">
+        <div class="eighth">
+          <div class="group">
+            <div class="player q3-s1"><span class="pos">33</span><span class="name">Fan Zhendong</span><span class="country">CHN</span></div>
+            <div class="player q3-s1"><span class="pos">34</span><span class="name">Dimitrij Ovtcharov</span><span class="country">GER</span></div>
+            <div class="player q3-s1"><span class="pos">35</span><span class="name">Korea DPR Player</span><span class="country">PRK</span></div>
+            <div class="player q3-s1"><span class="pos">36</span><span class="name">Lee Sangsu</span><span class="country">KOR</span></div>
+          </div>
+          <div class="group">
+            <div class="player q3-s2"><span class="pos">37</span><span class="name">Anton Kallberg</span><span class="country">SWE</span></div>
+            <div class="player q3-s2"><span class="pos">38</span><span class="name">Dimitrij Ovtcharov</span><span class="country">GER</span></div>
+            <div class="player q3-s2"><span class="pos">39</span><span class="name">Alexis Lebrun</span><span class="country">FRA</span></div>
+            <div class="player q3-s2"><span class="pos">40</span><span class="name">Chen Chien-an</span><span class="country">TPE</span></div>
+          </div>
+        </div>
+        <div class="eighth">
+          <div class="group">
+            <div class="player q3-s3"><span class="pos">41</span><span class="name">Lam Siu Hang</span><span class="country">HKG</span></div>
+            <div class="player q3-s3"><span class="pos">42</span><span class="name">Youssef Abdel-Aziz</span><span class="country">EGY</span></div>
+            <div class="player q3-s3"><span class="pos">43</span><span class="name">Harmeet Desai</span><span class="country">IND</span></div>
+            <div class="player q3-s3"><span class="pos">44</span><span class="name">Zhai Yujia</span><span class="country">SGP</span></div>
+          </div>
+          <div class="group">
+            <div class="player q3-s4"><span class="pos">45</span><span class="name">Marcos Freitas</span><span class="country">POR</span></div>
+            <div class="player q3-s4"><span class="pos">46</span><span class="name">Chen Weixing</span><span class="country">AUT</span></div>
+            <div class="player q3-s4 bye"><span class="pos">47</span><span class="name">BYE</span><span class="country"></span></div>
+            <div class="player q3-s4 bye"><span class="pos">48</span><span class="name">BYE</span><span class="country"></span></div>
+          </div>
+        </div>
+      </div>
+      <!-- Q4: 49-64 -->
+      <div class="quarter">
+        <div class="eighth">
+          <div class="group">
+            <div class="player q4-s1"><span class="pos">49</span><span class="name">Liang Jingkun</span><span class="country">CHN</span></div>
+            <div class="player q4-s1"><span class="pos">50</span><span class="name">Kristian Karlsson</span><span class="country">SWE</span></div>
+            <div class="player q4-s1"><span class="pos">51</span><span class="name">Yuto Muramatsu</span><span class="country">JPN</span></div>
+            <div class="player q4-s1"><span class="pos">52</span><span class="name">Jeoung Youngsik</span><span class="country">KOR</span></div>
+          </div>
+          <div class="group">
+            <div class="player q4-s2"><span class="pos">53</span><span class="name">Liam Pitchford</span><span class="country">ENG</span></div>
+            <div class="player q4-s2"><span class="pos">54</span><span class="name">Quadri Aruna</span><span class="country">NGR</span></div>
+            <div class="player q4-s2"><span class="pos">55</span><span class="name">Emmanuel Lebesson</span><span class="country">FRA</span></div>
+            <div class="player q4-s2"><span class="pos">56</span><span class="name">Lin Shidong</span><span class="country">CHN</span></div>
+          </div>
+        </div>
+        <div class="eighth">
+          <div class="group">
+            <div class="player q4-s3"><span class="pos">57</span><span class="name">Kao Cheng-Jui</span><span class="country">TPE</span></div>
+            <div class="player q4-s3"><span class="pos">58</span><span class="name">Izaac Quek</span><span class="country">SGP</span></div>
+            <div class="player q4-s3"><span class="pos">59</span><span class="name">Manav Thakkar</span><span class="country">IND</span></div>
+            <div class="player q4-s3"><span class="pos">60</span><span class="name">Anders Lind</span><span class="country">DEN</span></div>
+          </div>
+          <div class="group">
+            <div class="player q4-s4"><span class="pos">61</span><span class="name">Joao Monteiro</span><span class="country">POR</span></div>
+            <div class="player q4-s4"><span class="pos">62</span><span class="name">Daniel Gorak</span><span class="country">POL</span></div>
+            <div class="player q4-s4 bye"><span class="pos">63</span><span class="name">BYE</span><span class="country"></span></div>
+            <div class="player q4-s4 bye"><span class="pos">64</span><span class="name">BYE</span><span class="country"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
