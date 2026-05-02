@@ -3,10 +3,10 @@
 Plan: docs/plans/2026-05-02-remove-backend-implementation.md
 Branch: master
 Started: 2026-05-02T00:00:00Z
-Last updated: 2026-05-02T00:00:00Z
+Last updated: 2026-05-02T00:03:00Z
 
 | # | Status | Task | Commit |
 |---|--------|------|--------|
-| 1 | ⬜ pending | Port draw logic to TypeScript with passing tests [checkpoint: test] | — |
-| 2 | ⬜ pending | Create calculateDraw wrapper and wire up frontend | — |
-| 3 | ⬜ pending | Clean up Firebase config and remove backend files [checkpoint: done] | — |
+| 1 | ✅ done | Port draw logic to TypeScript with passing tests [checkpoint: test] | c1a2d65 |
+| 2 | ✅ done | Create calculateDraw wrapper and wire up frontend | 5334312 |
+| 3 | 🔄 in-progress | Clean up Firebase config and remove backend files [checkpoint: done] | — |
