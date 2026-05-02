@@ -6,7 +6,13 @@ export default {
     './node_modules/svetamat/**/*.svelte',
   ],
   theme: {
-    extend: {}
+    extend: {
+      colors: {
+        gray: {
+          150: '#d4d4d8',
+        },
+      },
+    }
   },
   variants: {
     boxShadow: ['responsive', 'hover', 'focus', 'active'],
