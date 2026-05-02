@@ -1,12 +1,57 @@
-# Steps to build and deploy
-## 1. Containerise to docker
-`gcloud builds submit --tag gcr.io/ttdraw/api`
+# sttacomp
 
-## 2. Deploying to Cloud Run
-`gcloud run deploy --image gcr.io/ttdraw/api --platform managed`
+A drawing application with a Go API backend and Svelte frontend.
 
-## 3. Deploy static files to Firebase
-- RUN `yarn build` locally in web folder
-- Run `firebase deploy`
+## Tech Stack
+- **Backend:** Go (Gin framework) running on Cloud Run
+- **Frontend:** Svelte + Vite + Tailwind CSS served via Firebase Hosting
+- **Infra:** Google Cloud Run, Firebase Hosting, Google Container Registry
 
-## 4. Remove files in Google Cloud Storage buckets
+---
+
+## Local Development
+
+### Prerequisites
+- Go 1.23+
+- Node.js 18+
+- `gcloud` CLI (for deployment)
+- Firebase CLI (`npm install -g firebase-tools`)
+
+### 1. Start the Go API
+```bash
+go run main.go
+```
+The API runs on `http://localhost:8080`.
+
+### 2. Start the frontend dev server
+```bash
+cd web
+npm install
+npm run dev
+```
+The frontend runs on `http://localhost:5173` and proxies `/api` requests to the Go API via Vite.
+
+---
+
+## Deployment
+
+### 1. Containerize & push the API to Google Container Registry
+```bash
+gcloud builds submit --tag gcr.io/ttdraw/api
+```
+
+### 2. Deploy the API to Cloud Run
+```bash
+gcloud run deploy --image gcr.io/ttdraw/api --platform managed
+```
+
+### 3. Build & deploy the frontend to Firebase Hosting
+```bash
+cd web
+npm run build
+cd ..
+firebase deploy
+```
+
+### 4. Clean up (optional)
+Remove unused files in Google Cloud Storage buckets as needed.

@@ -101,22 +101,6 @@ var expected = map[req]resp{
 	},
 }
 
-// func Test2ndMethod(t *testing.T) {
-// 	for winner := 9; winner <= 16; winner++ {
-// 		for runnerup := winner - 1; runnerup <= winner; runnerup++ {
-// 			request := req{
-// 				Winner:   winner,
-// 				Runnerup: runnerup,
-// 			}
-// 			_, method, err := testReqCal(request)
-// 			if err != nil {
-// 				t.Log(err.Error())
-// 				continue
-// 			}
-// 			t.Logf("Winner: %d. RunnerUp: %d. Method: %d\n", winner, runnerup, method)
-// 		}
-// 	}
-// }
 
 func TestCalc(t *testing.T) {
 	for request, expectedResponse := range expected {

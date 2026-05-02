@@ -1,31 +1,33 @@
-# svelte-tailwindcss-template
+# sttacomp — Frontend
 
-This is a fork of Svelte's project template to enable usage of Material UI components built on Tailwindcss. Refer to https://github.com/sveltejs/template for more info.
-
-To create a new project based on this template using [degit](https://github.com/Rich-Harris/degit):
-
-```bash
-npx degit tianhai82/svetamat-template svelte-app
-cd svelte-app
-```
-
-_Note that you will need to have [Node.js](https://nodejs.org) installed._
+Svelte app with Tailwind CSS, built with Vite.
 
 ## Get started
 
-Install the dependencies...
+Install the dependencies:
 
 ```bash
-cd svelte-app
-yarn
+npm install
 ```
 
-...then start [Rollup](https://rollupjs.org):
+Start the dev server:
 
 ```bash
-yarn run dev
+npm run dev
 ```
 
-Navigate to [localhost:5000](http://localhost:5000). You should see your app running. Edit a component file in `src`, save it, and reload the page to see your changes.
+Navigate to [localhost:5173](http://localhost:5173). The app proxies `/api` requests to the Go backend running on `localhost:8080`.
 
-By default, the server will only respond to requests from localhost. To allow connections from other computers, edit the `sirv` commands in package.json to include the option `--host 0.0.0.0`.
+Build for production:
+
+```bash
+npm run build
+```
+
+Output is written to `dist/`, which is deployed to Firebase Hosting.
+
+## Preview production build
+
+```bash
+npm run preview
+```
