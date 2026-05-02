@@ -1,7 +1,7 @@
 <script>
   import { Input, Button, Checkbox, Spinner } from "svetamat";
   import { calculateDraws } from "../apis/draw";
-  import Knockout from "../components/Knockout.svelte";
+  import SplitDraw from "../components/SplitDraw.svelte";
 
   let winners = 20;
   let runnerups = 20;
@@ -155,8 +155,8 @@
           {/each}
         </div>
       </div>
-      <div class="rounded-lg my-4 mx-2 py-4 px-4 elevation-3 overflow-x-auto">
-        <Knockout {round} {players} />
+      <div class="rounded-lg my-4 mx-2 py-4 px-4 overflow-x-auto" style="background: radial-gradient(circle at center, #233c2d 0%, #101c15 100%);">
+        <SplitDraw {round} {players} />
       </div>
     {/if}
   {:catch e}
