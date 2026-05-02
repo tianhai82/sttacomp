@@ -155,7 +155,7 @@
           {/each}
         </div>
       </div>
-      <div class="rounded-lg my-4 mx-2 py-4 px-4 overflow-x-auto" style="background: radial-gradient(circle at center, #233c2d 0%, #101c15 100%);">
+      <div class="rounded-lg my-4 mx-2 py-4 px-4 overflow-x-auto bg-white">
         <SplitDraw {round} {players} />
       </div>
     {/if}

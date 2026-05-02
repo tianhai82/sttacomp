@@ -53,110 +53,21 @@
   $: columns = getColumns(round, players, columnCount, positionsPerColumn);
 </script>
 
-<style>
-  .columns-container {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-  .column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 260px;
-  }
-  .column-label {
-    font-size: 14px;
-    font-weight: bold;
-    color: #eee;
-    margin-bottom: 8px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .column-body {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    width: 100%;
-  }
-  .quarter {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 4px;
-  }
-  .eighth {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    padding: 2px;
-  }
-  .group {
-    display: flex;
-    flex-direction: column;
-    background: linear-gradient(to bottom, #ffffff 0%, #e2e8f0 100%);
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-    border: 1px solid #94a3b8;
-  }
-  .player {
-    display: flex;
-    align-items: center;
-    height: 19px;
-    font-size: 11px;
-    color: #0f172a;
-  }
-  .player + .player {
-    border-top: 1px solid #cbd5e1;
-  }
-  .pos {
-    background: linear-gradient(to bottom, #fde047, #eab308);
-    font-weight: 700;
-    min-width: 22px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-right: 1px solid #94a3b8;
-    color: #000;
-    font-size: 11px;
-  }
-  .name {
-    flex: 1;
-    font-weight: 700;
-    padding-left: 6px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .name.winner { color: #15803d; }
-  .name.runner-up { color: #c2410c; }
-  .name.bye { color: #64748b; font-style: italic; font-weight: 500; }
-</style>
-
-<div class="columns-container">
+<div class="flex gap-5 justify-center items-start flex-wrap">
   {#each columns as column}
-    <div class="column">
-      <div class="column-label">{column.label}</div>
-      <div class="column-body">
+    <div class="flex flex-col items-center w-64">
+      <div class="text-gray-700 font-bold text-sm tracking-wide uppercase mb-2">{column.label}</div>
+      <div class="flex flex-col gap-1 w-full">
         {#each column.quarters as quarter}
-          <div class="quarter">
+          <div class="flex flex-col gap-1 border border-gray-300 rounded-lg p-2">
             {#each quarter as eighth}
-              <div class="eighth">
+              <div class="flex flex-col gap-1 bg-gray-50 rounded p-1">
                 {#each eighth as group}
-                  <div class="group">
-                    {#each group as player}
-                      <div class="player">
-                        <span class="pos">{player.pos}</span>
-                        <span class="name {player.isBye ? 'bye' : player.isWinner ? 'winner' : player.isRunnerUp ? 'runner-up' : ''}">
+                  <div class="flex flex-col bg-white border border-gray-200 rounded shadow-sm overflow-hidden">
+                    {#each group as player, i}
+                      <div class="flex items-center h-5 text-xs text-gray-800 {i > 0 ? 'border-t border-gray-100' : ''}">
+                        <span class="bg-gray-100 font-bold min-w-[22px] h-full flex items-center justify-center border-r border-gray-200 text-gray-700">{player.pos}</span>
+                        <span class="flex-1 font-semibold pl-2 truncate {player.isBye ? 'text-gray-400 italic font-normal' : player.isWinner ? 'text-green-700' : player.isRunnerUp ? 'text-orange-700' : ''}">
                           {player.label}
                         </span>
                       </div>
