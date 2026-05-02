@@ -61,7 +61,7 @@
         {#each column.quarters as quarter}
           <div class="flex flex-col gap-1 border border-gray-300 rounded-lg p-2">
             {#each quarter as eighth, ei}
-              <div class="flex flex-col gap-1 rounded p-1 {ei % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
+              <div class="flex flex-col gap-1 rounded p-1 {ei % 2 === 0 ? 'bg-gray-100' : 'bg-white'}">
                 {#each eighth as group}
                   <div class="flex flex-col bg-white border border-gray-200 rounded shadow-sm overflow-hidden">
                     {#each group as player, i}
