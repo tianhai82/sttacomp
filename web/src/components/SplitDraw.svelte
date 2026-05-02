@@ -67,7 +67,7 @@
                     {#each group as player, i}
                       <div class="flex items-center h-6 text-sm text-gray-800 {i > 0 ? 'border-t border-gray-100' : ''}">
                         <span class="bg-gray-100 font-bold min-w-[24px] h-full flex items-center justify-center border-r border-gray-200 text-gray-700 text-sm">{player.pos}</span>
-                        <span class="flex-1 font-semibold pl-2 truncate {player.isBye ? 'text-gray-400 italic font-normal' : player.isWinner ? 'text-green-700' : player.isRunnerUp ? 'text-orange-700' : ''}">
+                        <span class="flex-1 font-semibold pl-2 truncate {player.isBye ? 'text-gray-400 italic font-normal' : player.isWinner ? 'text-green-700' : player.isRunnerUp ? 'text-orange-500' : ''}">
                           {player.label}
                         </span>
                       </div>
