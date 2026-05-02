@@ -9,4 +9,4 @@ Last updated: 2026-05-02T12:00:00Z
 |---|--------|------|--------|
 | 1 | ✅ done | Create SplitDraw.svelte component | 6565635 |
 | 2 | ✅ done | Wire SplitDraw into Draw.svelte and add dark background | f68d7ce |
-| 3 | 🔄 in-progress | Verify with dev server and clean up old components | — |
+| 3 | ✅ done | Verify with dev server and clean up old components | c9a871e |
