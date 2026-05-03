@@ -60,12 +60,12 @@
       })()
     : new Map();
 
-  $: chartProps = state
+  $: chartProps = state && activePositions
     ? {
         round: state.round,
-        winners: state.baseWinnerPositions,
-        runnerups: state.baseRunnerUpPositions,
-        byes: state.baseByePositions,
+        winners: activePositions.winners,
+        runnerups: activePositions.runnerups,
+        byes: activePositions.byes,
         placedPlayers,
       }
     : null;
