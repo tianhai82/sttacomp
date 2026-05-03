@@ -3,6 +3,7 @@
   import { Button } from "svetamat";
   import { calculateDraws } from "../lib/calculateDraw";
   import DrawPrepChart from "../components/DrawPrepChart.svelte";
+  import DrawPrepGroups from "../components/DrawPrepGroups.svelte";
   import type { DrawPrepState, Group } from "../lib/types";
 
   let numGroupsInput = "";
@@ -90,7 +91,7 @@
           <h2 class="text-lg font-medium mb-4">
             Groups ({state.numGroups})
           </h2>
-          <p class="text-gray-500 text-sm">Group cards coming soon...</p>
+          <DrawPrepGroups groups={state.groups} on:change={(e) => { state = { ...state, groups: e.detail.groups }; }} />
         </div>
       </div>
       <!-- Right panel: KO Chart -->
