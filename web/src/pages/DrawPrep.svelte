@@ -252,7 +252,7 @@
   });
 </script>
 
-<div class="container mx-auto pt-3 px-3 flex flex-col">
+<div class="container mx-auto pt-3 px-3 flex flex-col min-h-[calc(100vh-3rem)]">
   {#if !confirmed}
     <div class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-white">
       <h2 class="text-lg font-medium mb-4">Draw Preparation Setup</h2>
