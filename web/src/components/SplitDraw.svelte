@@ -42,14 +42,25 @@
 
   function buildColumn(columnIndex, positionsPerColumn, columnCount, players) {
     const startPos = columnIndex * positionsPerColumn + 1;
-    const quarterCount = positionsPerColumn / 16;
-    const quarters = Array.from({ length: quarterCount }, (_, q) =>
-      buildQuarter(startPos + q * 16, players)
-    );
     const label = columnCount === 2
       ? (columnIndex === 0 ? 'TOP HALF' : 'BOTTOM HALF')
       : `QUARTER ${columnIndex + 1}`;
-    return { label, quarters };
+
+    if (positionsPerColumn >= 16) {
+      const quarterCount = positionsPerColumn / 16;
+      const quarters = Array.from({ length: quarterCount }, (_, q) =>
+        buildQuarter(startPos + q * 16, players)
+      );
+      return { label, quarters };
+    }
+
+    // Small draws (< 16 positions per column): build groups of up to 4
+    const groupCount = Math.ceil(positionsPerColumn / 4);
+    const groups = Array.from({ length: groupCount }, (_, g) => {
+      const size = Math.min(4, positionsPerColumn - g * 4);
+      return Array.from({ length: size }, (_, p) => buildPlayer(startPos + g * 4 + p, players));
+    });
+    return { label, quarters: [[groups]] };
   }
 
   $: columns = Array.from({ length: columnCount }, (_, c) =>
