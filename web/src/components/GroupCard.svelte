@@ -21,8 +21,14 @@
   // Local bind variables for selects — avoids Svelte index-based reconciliation bug
   let localWinnerPos = '';
   let localRunnerUpPos = '';
-  $: localWinnerPos = group.winner.position ?? '';
-  $: localRunnerUpPos = group.runnerUp?.position ?? '';
+  $: {
+    const wp = group.winner.position !== null ? String(group.winner.position) : '';
+    if (wp !== String(localWinnerPos)) localWinnerPos = wp;
+  }
+  $: {
+    const rp = group.runnerUp && group.runnerUp.position !== null ? String(group.runnerUp.position) : '';
+    if (rp !== String(localRunnerUpPos)) localRunnerUpPos = rp;
+  }
 
   function dispatchUpdate(field, value) {
     dispatch("update", { groupIndex: groupIndex - 1, field, value });
