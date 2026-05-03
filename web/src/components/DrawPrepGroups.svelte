@@ -5,6 +5,7 @@
 
   export let groups = [];
   export let availableWinnerPositions = [];
+  export let availableRunnerUpPositionsPerGroup = [];
 
   function handleUpdate(e) {
     const { groupIndex, field, value } = e.detail;
@@ -21,6 +22,7 @@
       {group}
       groupIndex={i + 1}
       {availableWinnerPositions}
+      availableRunnerUpPositions={availableRunnerUpPositionsPerGroup[i] || []}
       on:update={handleUpdate}
     />
   {/each}

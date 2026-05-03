@@ -3,6 +3,7 @@
   export let group;
   export let groupIndex = 1; // 1-based
   export let availableWinnerPositions = [];
+  export let availableRunnerUpPositions = [];
 
   function dispatchUpdate(field, value) {
     dispatch("update", { groupIndex: groupIndex - 1, field, value });
@@ -40,6 +41,12 @@
     const val = e.target.value;
     const pos = val === "" ? null : parseInt(val, 10);
     dispatchWinnerUpdate("position", pos);
+  }
+
+  function onRunnerUpPositionSelect(e) {
+    const val = e.target.value;
+    const pos = val === "" ? null : parseInt(val, 10);
+    dispatchRunnerUpUpdate("position", pos);
   }
 </script>
 
@@ -106,6 +113,17 @@
         value={group.runnerUp.name}
         on:input={(e) => dispatchRunnerUpUpdate("name", e.target.value)}
       />
+      <select
+        class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-red-500"
+        value={group.runnerUp.position ?? ""}
+        on:change={onRunnerUpPositionSelect}
+        disabled={group.winner.position === null}
+      >
+        <option value="">{group.winner.position === null ? 'Place winner first' : 'Position'}</option>
+        {#each availableRunnerUpPositions as pos}
+          <option value={pos}>Position {pos}</option>
+        {/each}
+      </select>
     </div>
   {/if}
 </div>

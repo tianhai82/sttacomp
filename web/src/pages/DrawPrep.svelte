@@ -4,7 +4,7 @@
   import { calculateDraws } from "../lib/calculateDraw";
   import DrawPrepChart from "../components/DrawPrepChart.svelte";
   import DrawPrepGroups from "../components/DrawPrepGroups.svelte";
-  import { getOccupiedPositions, getAvailablePositions } from "../lib/positions";
+  import { getOccupiedPositions, getAvailablePositions, deriveActivePositions, isInOppositeHalf } from "../lib/positions";
   import type { DrawPrepState, Group } from "../lib/types";
 
   let numGroupsInput = "";
@@ -15,9 +15,21 @@
   // Occupied positions derived reactively from groups
   $: occupiedPositions = state ? getOccupiedPositions(state.groups) : new Set();
 
+  // Active positions (reactive) — accounts for groups without runner-ups
+  $: activePositions = state ? deriveActivePositions(state) : null;
+
   // Available winner positions: base winners minus occupied
   $: availableWinnerPositions = state
     ? getAvailablePositions(state.baseWinnerPositions, occupiedPositions)
+    : [];
+
+  // Available runner-up positions per group: active runner-ups minus occupied, filtered by opposite half
+  $: availableRunnerUpPositionsPerGroup = state && activePositions
+    ? state.groups.map(group => {
+        if (group.winner.position === null) return [];
+        return getAvailablePositions(activePositions.runnerups, occupiedPositions)
+          .filter(pos => isInOppositeHalf(pos, group.winner.position, state.round));
+      })
     : [];
 
   // Placed players map for the chart: position -> {name, na, type}
@@ -127,6 +139,7 @@
           <DrawPrepGroups
             groups={state.groups}
             availableWinnerPositions={availableWinnerPositions}
+            availableRunnerUpPositionsPerGroup={availableRunnerUpPositionsPerGroup}
             on:change={(e) => { state = { ...state, groups: e.detail.groups }; }}
           />
         </div>
