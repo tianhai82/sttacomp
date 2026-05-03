@@ -85,4 +85,5 @@
 body {
   margin: 0;
   font-family: Roboto;
+  min-height: 100vh;
 }

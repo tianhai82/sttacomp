@@ -1,0 +1,402 @@
+// web/src/lib/positions.test.ts
+import { describe, it, expect } from "vitest";
+import {
+  deriveActivePositions,
+  getOccupiedPositions,
+  getAvailablePositions,
+  isInOppositeHalf,
+  findInvalidRunnerUpIndices,
+  clearInvalidRunnerUps,
+} from "./positions";
+import type { Group, DrawPrepState } from "./types";
+
+function makeGroup(overrides?: Partial<Group>): Group {
+  return {
+    winner: { na: "", name: "", position: null },
+    hasRunnerUp: true,
+    runnerUp: null,
+    ...overrides,
+  };
+}
+
+function makeState(groups: Group[], round = 8): DrawPrepState {
+  return {
+    id: "test",
+    createdAt: Date.now(),
+    numGroups: groups.length,
+    groups,
+    round,
+    baseWinnerPositions: [1, 8, 4, 5],
+    baseRunnerUpPositions: [3, 6],
+    baseByePositions: [2, 7],
+  };
+}
+
+describe("deriveActivePositions", () => {
+  it("returns base positions when no groups are missing runner-ups", () => {
+    const groups = [
+      makeGroup(),
+      makeGroup(),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+
+    const result = deriveActivePositions(state);
+
+    expect(result.winners).toEqual([1, 8, 4, 5]);
+    expect(result.runnerups).toEqual([3, 6]);
+    expect(result.byes).toEqual([2, 7]);
+  });
+
+  it("removes highest runner-up from opposite half when one group has no runner-up, winner in bottom half", () => {
+    // round=8, top half = 1-4, bottom half = 5-8
+    // Winner at position 5 (bottom half) → remove from top half runner-ups
+    // baseRunnerUpPositions = [3, 6]; top half runner-ups = [3]
+    // Remove highest in top half = 3
+    const groups = [
+      makeGroup({ winner: { na: "", name: "", position: 5 }, hasRunnerUp: false }),
+      makeGroup(),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+
+    const result = deriveActivePositions(state);
+
+    expect(result.runnerups).toEqual([6]);
+    expect(result.byes).toEqual([2, 7, 3]);
+    expect(result.winners).toEqual([1, 8, 4, 5]);
+  });
+
+  it("removes highest runner-up from opposite half when one group has no runner-up, winner in top half", () => {
+    // Winner at position 1 (top half) → remove from bottom half runner-ups
+    // baseRunnerUpPositions = [3, 6]; bottom half runner-ups = [6]
+    // Remove highest in bottom half = 6
+    const groups = [
+      makeGroup({ winner: { na: "", name: "", position: 1 }, hasRunnerUp: false }),
+      makeGroup(),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+
+    const result = deriveActivePositions(state);
+
+    expect(result.runnerups).toEqual([3]);
+    expect(result.byes).toEqual([2, 7, 6]);
+    expect(result.winners).toEqual([1, 8, 4, 5]);
+  });
+
+  it("removes two runner-ups from opposite half when two groups without runner-ups have winners in same half", () => {
+    // Both winners in bottom half → remove two from top half runner-ups
+    // baseRunnerUpPositions = [3, 6]; top half = [3]
+    // Only 1 top half runner-up, so only 1 can be removed
+    const groups = [
+      makeGroup({ winner: { na: "", name: "", position: 5 }, hasRunnerUp: false }),
+      makeGroup({ winner: { na: "", name: "", position: 8 }, hasRunnerUp: false }),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+
+    const result = deriveActivePositions(state);
+
+    expect(result.runnerups).toEqual([6]);
+    expect(result.byes).toContain(3);
+    expect(result.byes.length).toBe(3);
+  });
+
+  it("removes one from each half when two groups without runner-ups have winners in different halves", () => {
+    // Winner at 1 (top half) → remove from bottom half: [6] → remove 6
+    // Winner at 8 (bottom half) → remove from top half: [3] → remove 3
+    const groups = [
+      makeGroup({ winner: { na: "", name: "", position: 1 }, hasRunnerUp: false }),
+      makeGroup({ winner: { na: "", name: "", position: 8 }, hasRunnerUp: false }),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+
+    const result = deriveActivePositions(state);
+
+    expect(result.runnerups).toEqual([]);
+    expect(result.byes).toContain(3);
+    expect(result.byes).toContain(6);
+    expect(result.byes.length).toBe(4); // 2 base + 2 removed
+  });
+
+  it("ignores groups without runner-up if winner position is null", () => {
+    const groups = [
+      makeGroup({ hasRunnerUp: false }), // winner position null
+      makeGroup(),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+
+    const result = deriveActivePositions(state);
+
+    // No removal because winner not placed
+    expect(result.runnerups).toEqual([3, 6]);
+    expect(result.byes).toEqual([2, 7]);
+  });
+});
+
+describe("getOccupiedPositions", () => {
+  it("returns set of all non-null positions", () => {
+    const groups = [
+      makeGroup({ winner: { na: "", name: "A", position: 1 } }),
+      makeGroup({
+        winner: { na: "", name: "B", position: 8 },
+        runnerUp: { na: "", name: "C", position: 3 },
+      }),
+      makeGroup({ winner: { na: "", name: "D", position: null } }),
+    ];
+
+    const occupied = getOccupiedPositions(groups);
+
+    expect(occupied).toEqual(new Set([1, 8, 3]));
+  });
+
+  it("returns empty set when no positions are assigned", () => {
+    const groups = [makeGroup(), makeGroup()];
+    const occupied = getOccupiedPositions(groups);
+    expect(occupied).toEqual(new Set());
+  });
+});
+
+describe("getAvailablePositions", () => {
+  it("filters active positions against occupied set", () => {
+    const active = [1, 3, 5, 7];
+    const occupied = new Set([3, 5]);
+    const available = getAvailablePositions(active, occupied);
+    expect(available).toEqual([1, 7]);
+  });
+
+  it("returns all positions when none occupied", () => {
+    const active = [1, 3, 5, 7];
+    const occupied = new Set();
+    const available = getAvailablePositions(active, occupied);
+    expect(available).toEqual([1, 3, 5, 7]);
+  });
+});
+
+describe("available runner-up positions per group with half constraint", () => {
+  it("returns empty array when winner position is null", () => {
+    const groups = [makeGroup()]; // winner position null
+    const state = makeState(groups);
+    const active = deriveActivePositions(state);
+    const occupied = getOccupiedPositions(groups);
+    const available = getAvailablePositions(active.runnerups, occupied);
+    // winner position null → can't determine opposite half
+    expect(groups[0].winner.position).toBeNull();
+  });
+
+  it("filters runner-up positions to opposite half only", () => {
+    // round=8, top half = 1-4, bottom half = 5-8
+    // baseRunnerUpPositions = [3, 6]
+    // Winner at position 5 (bottom half) → runner-up must be in top half
+    const groups = [
+      makeGroup({ winner: { na: "", name: "A", position: 5 } }),
+      makeGroup(),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+    const active = deriveActivePositions(state);
+    const occupied = getOccupiedPositions(groups);
+    const available = getAvailablePositions(active.runnerups, occupied);
+    const filtered = available.filter(p => isInOppositeHalf(p, 5, 8));
+
+    expect(filtered).toEqual([3]); // 3 is top half, 6 is bottom half → excluded
+  });
+
+  it("excludes occupied runner-up positions", () => {
+    // Group 1 winner at 1 (top half), runner-up at 3
+    // Group 2 winner at 5 (bottom half) → available runner-ups should be in top half minus occupied
+    const groups = [
+      makeGroup({
+        winner: { na: "", name: "A", position: 1 },
+        runnerUp: { na: "", name: "C", position: 3 },
+      }),
+      makeGroup({ winner: { na: "", name: "B", position: 5 } }),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+    const active = deriveActivePositions(state);
+    const occupied = getOccupiedPositions(groups);
+    const available = getAvailablePositions(active.runnerups, occupied);
+    const filtered = available.filter(p => isInOppositeHalf(p, 5, 8));
+
+    // active runnerups = [3, 6], occupied = {1, 3}, available = [6]
+    // 6 is bottom half, opposite of winner at 5 (bottom half) → NOT opposite
+    expect(filtered).toEqual([]);
+  });
+
+  it("handles group without runner-up — runner-up slots removed from active", () => {
+    // Group 1: winner at 5 (bottom half), no runner-up → removes highest top-half runner-up (3)
+    // Group 2: winner at 1 (top half), has runner-up → available runner-ups: [6] (bottom half)
+    const groups = [
+      makeGroup({ winner: { na: "", name: "A", position: 5 }, hasRunnerUp: false }),
+      makeGroup({ winner: { na: "", name: "B", position: 1 } }),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+    const active = deriveActivePositions(state);
+    const occupied = getOccupiedPositions(groups);
+    const available = getAvailablePositions(active.runnerups, occupied);
+    const filtered = available.filter(p => isInOppositeHalf(p, 1, 8));
+
+    // active runnerups = [6] (3 removed), available = [6] (nothing occupied in runnerups)
+    // Winner at 1 (top half), opposite = bottom half, 6 is bottom half ✓
+    expect(filtered).toEqual([6]);
+  });
+});
+
+describe("isInOppositeHalf", () => {
+  it("returns true for top half when winner is in bottom half", () => {
+    expect(isInOppositeHalf(1, 5, 8)).toBe(true);  // pos 1 top, winner 5 bottom
+  });
+
+  it("returns true for bottom half when winner is in top half", () => {
+    expect(isInOppositeHalf(6, 2, 8)).toBe(true);  // pos 6 bottom, winner 2 top
+  });
+
+  it("returns false for same half", () => {
+    expect(isInOppositeHalf(1, 3, 8)).toBe(false); // both top
+    expect(isInOppositeHalf(5, 7, 8)).toBe(false); // both bottom
+  });
+
+  it("works for round 4", () => {
+    expect(isInOppositeHalf(1, 3, 4)).toBe(true);  // top vs bottom
+    expect(isInOppositeHalf(1, 2, 4)).toBe(false); // both top
+  });
+});
+
+describe("findInvalidRunnerUpIndices", () => {
+  it("detects runner-up in removed slot when winner repositions across halves", () => {
+    // round=8, baseRunnerUpPositions = [3, 6]
+    // Group 1: winner at 5 (bottom), no runner-up → removes runner-up 3 (top half)
+    // Group 2: winner at 1 (top), runner-up at 6 (bottom, opposite ✓)
+    // 
+    // Now Group 1 winner moves from 5→2 (top half):
+    //   - removes runner-up 6 (bottom, opposite of 2) instead of 3
+    //   - Group 2's runner-up at 6 is no longer active → should be flagged
+    const groups = [
+      makeGroup({ winner: { na: "", name: "A", position: 2 }, hasRunnerUp: false }),
+      makeGroup({
+        winner: { na: "", name: "B", position: 1 },
+        runnerUp: { na: "", name: "R2", position: 6 },
+      }),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+    const active = deriveActivePositions(state);
+
+    const invalid = findInvalidRunnerUpIndices(groups, active, state.round);
+
+    expect(invalid).toEqual([1]); // Group 2 (index 1) has invalid runner-up
+  });
+
+  it("detects runner-up no longer in opposite half after winner reposition", () => {
+    // round=8, baseRunnerUpPositions = [3, 6]
+    // Group 1: winner at 1 (top), runner-up at 6 (bottom, opposite ✓)
+    // Group 1 winner moves from 1→5 (bottom):
+    //   - 6 is still active, but 5 and 6 are both in bottom half → no longer opposite
+    const groups = [
+      makeGroup({
+        winner: { na: "", name: "A", position: 5 },
+        runnerUp: { na: "", name: "R1", position: 6 },
+      }),
+      makeGroup(),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+    const active = deriveActivePositions(state);
+
+    const invalid = findInvalidRunnerUpIndices(groups, active, state.round);
+
+    expect(invalid).toEqual([0]); // Group 1 runner-up now in same half
+  });
+
+  it("returns empty when all runner-ups are still valid", () => {
+    const groups = [
+      makeGroup({
+        winner: { na: "", name: "A", position: 5 },
+        runnerUp: { na: "", name: "R1", position: 3 }, // top half, opposite of 5 ✓
+      }),
+      makeGroup({
+        winner: { na: "", name: "B", position: 1 },
+        runnerUp: { na: "", name: "R2", position: 6 }, // bottom half, opposite of 1 ✓
+      }),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+    const active = deriveActivePositions(state);
+
+    const invalid = findInvalidRunnerUpIndices(groups, active, state.round);
+
+    expect(invalid).toEqual([]);
+  });
+
+  it("ignores groups without runner-up placed", () => {
+    const groups = [
+      makeGroup({ winner: { na: "", name: "A", position: 5 } }),
+      makeGroup(),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+    const active = deriveActivePositions(state);
+
+    const invalid = findInvalidRunnerUpIndices(groups, active, state.round);
+
+    expect(invalid).toEqual([]);
+  });
+});
+
+describe("clearInvalidRunnerUps", () => {
+  it("clears invalid runner-up positions and returns cleared indices", () => {
+    const groups = [
+      makeGroup({ winner: { na: "", name: "A", position: 5 }, runnerUp: { na: "", name: "R1", position: 6 } }),
+      makeGroup({ winner: { na: "", name: "B", position: 1 }, runnerUp: { na: "", name: "R2", position: 3 } }),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+    const active = deriveActivePositions(state);
+
+    // Group 0: runner-up at 6, winner at 5, both bottom half → invalid
+    // Group 1: runner-up at 3, winner at 1, both top half → invalid
+    const { groups: updated, cleared } = clearInvalidRunnerUps(groups, active, state.round);
+
+    expect(cleared).toEqual([0, 1]);
+    expect(updated[0].runnerUp!.position).toBeNull();
+    expect(updated[1].runnerUp!.position).toBeNull();
+    // Names should be preserved
+    expect(updated[0].runnerUp!.name).toBe("R1");
+    expect(updated[1].runnerUp!.name).toBe("R2");
+  });
+
+  it("returns same groups when nothing is invalid", () => {
+    const groups = [
+      makeGroup({ winner: { na: "", name: "A", position: 5 }, runnerUp: { na: "", name: "R1", position: 3 } }),
+      makeGroup(),
+      makeGroup(),
+      makeGroup(),
+    ];
+    const state = makeState(groups);
+    const active = deriveActivePositions(state);
+
+    const { groups: updated, cleared } = clearInvalidRunnerUps(groups, active, state.round);
+
+    expect(cleared).toEqual([]);
+    expect(updated).toEqual(groups);
+  });
+});

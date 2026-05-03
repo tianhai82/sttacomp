@@ -1,8 +1,15 @@
 <script>
   import Logo from "./components/Logo.svelte";
   import Draw from "./pages/Draw.svelte";
+  import DrawPrep from "./pages/DrawPrep.svelte";
 
-  let component = Draw;
+  const pages = {
+    draw: Draw,
+    drawPrep: DrawPrep,
+  };
+
+  let selectedPage = "draw";
+  $: component = pages[selectedPage];
 </script>
 
 <style>
@@ -15,11 +22,22 @@
     <Logo />
     Table Tennis Draw Helper
   </h1>
-  <!-- <button
-    class="h-full text-white ripple focus:outline-none px-3"
-    on:click={() => (component = Draw)}>
-    Draw
-  </button> -->
+  <div class="flex">
+    <button
+      class="h-full text-white ripple focus:outline-none px-3 {selectedPage === 'draw'
+        ? 'bg-red-700'
+        : 'bg-red-600'}"
+      on:click={() => (selectedPage = "draw")}>
+      Draw Calculator
+    </button>
+    <button
+      class="h-full text-white ripple focus:outline-none px-3 {selectedPage === 'drawPrep'
+        ? 'bg-red-700'
+        : 'bg-red-600'}"
+      on:click={() => (selectedPage = "drawPrep")}>
+      Draw Preparation
+    </button>
+  </div>
 </div>
 <svelte:component this={component} />
 <footer class="fixed w-full bottom-0 bg-red-100 border-t border-b border-red-300 elevation-5">

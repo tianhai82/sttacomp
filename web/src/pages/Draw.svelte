@@ -39,6 +39,10 @@
   function numberOrder(a, b) {
     return a - b;
   }
+  function winnerSeedLabel(n) {
+    if (n <= 2) return String(n);
+    return "=" + (Math.pow(2, Math.floor(Math.log2(n - 1))) + 1);
+  }
   let calculatePromise;
   function calculate() {
     players = [];
@@ -46,21 +50,21 @@
     runnerUpsPositions = [];
     byesPositions = [];
     round = 0;
-    calculatePromise = calculateDraws({ winners, runnerups }).then(data => {
+    calculatePromise = calculateDraws({ winners, runnerups }).then((data) => {
       round = data.rounds;
       for (let i = 0; i < round; i++) {
         players.push(`${i + 1}`);
       }
-      data.byes.forEach(pos => {
+      data.byes.forEach((pos) => {
         players[pos - 1] = `${pos}: BYE`;
         byesPositions.push(pos);
       });
       data.winners.forEach((pos, i) => {
-        players[pos - 1] = `${pos}: Winner: ${i + 1}`;
+        players[pos - 1] = `${pos}: Winner: ${winnerSeedLabel(i + 1)}`;
         winnersPositions.push(pos);
       });
-      data.runnerups.forEach((pos, i) => {
-        players[pos - 1] = `${pos}: Runner-up: ${i + 1}`;
+      data.runnerups.forEach((pos) => {
+        players[pos - 1] = `${pos}: Runner-up`;
         runnerUpsPositions.push(pos);
       });
       players = players;
@@ -81,7 +85,8 @@
         outlined
         on:keyup={calculate}
         label="Total no. of winners"
-        bind:value={winners} />
+        bind:value={winners}
+      />
     </div>
     <div class="w-1/2 mx-2">
       <Input
@@ -89,7 +94,8 @@
         outlined
         on:keyup={calculate}
         label="Total no. of runner-ups"
-        bind:value={runnerups} />
+        bind:value={runnerups}
+      />
     </div>
   </div>
   <div class="flex flex-row-reverse mr-2 -mt-3">
@@ -99,7 +105,8 @@
   </div>
   {#await calculatePromise}
     <div
-      class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-blue-100 flex items-center">
+      class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-blue-100 flex items-center"
+    >
       <Spinner />
       <div class="ml-4">Calculation in progress...</div>
     </div>
@@ -108,13 +115,15 @@
       <div class="rounded-lg mt-4 mx-2 py-4 px-4 elevation-3 bg-green-100">
         <h2
           class="sm:text-lg text-base font-medium mr-2 flex items-center
-          justify-between">
+          justify-between"
+        >
           Winners' Positions
           <div class="ml-6">
             <Checkbox
               label="Ascending"
               color="text-orange-600"
-              bind:checked={sorted} />
+              bind:checked={sorted}
+            />
           </div>
         </h2>
         <div class="flex flex-wrap">
@@ -161,7 +170,8 @@
     {/if}
   {:catch e}
     <div
-      class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-red-100 flex items-center">
+      class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-red-100 flex items-center"
+    >
       <span class="material-icons text-red-500">error</span>
       <div class="ml-4">{e.message}</div>
     </div>
