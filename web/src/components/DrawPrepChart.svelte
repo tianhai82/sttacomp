@@ -110,8 +110,8 @@
                         <span class="bg-gray-100 font-bold min-w-[24px] h-full flex items-center justify-center border-r border-gray-200 text-gray-700 text-sm">{player.pos}</span>
                         <span class="flex-1 pl-2 truncate
                           {player.named ? 'font-bold' : 'font-normal'}
-                          {!player.named && player.kind === 'winner' ? 'italic text-green-700 opacity-50' : ''}
-                          {!player.named && player.kind === 'runner-up' ? 'italic text-orange-500 opacity-50' : ''}
+                          {!player.named && player.kind === 'winner' ? 'italic text-green-700 opacity-70' : ''}
+                          {!player.named && player.kind === 'runner-up' ? 'italic text-orange-500 opacity-70' : ''}
                           {player.named && player.kind === 'winner' ? 'text-green-700' : ''}
                           {player.named && player.kind === 'runner-up' ? 'text-orange-500' : ''}
                           {player.kind === 'bye' ? 'italic text-gray-400 opacity-50 font-normal' : ''}
