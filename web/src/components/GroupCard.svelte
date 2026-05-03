@@ -8,6 +8,16 @@
   export let availableWinnerPositions = [];
   export let availableRunnerUpPositions = [];
 
+  // Always include currently selected position in dropdown options
+  $: winnerSelectOptions = group.winner.position !== null && !availableWinnerPositions.includes(group.winner.position)
+    ? [group.winner.position, ...availableWinnerPositions]
+    : availableWinnerPositions;
+
+  $: runnerUpSelectOptions = group.runnerUp?.position !== null && group.runnerUp.position !== undefined
+    && !availableRunnerUpPositions.includes(group.runnerUp.position)
+    ? [group.runnerUp.position, ...availableRunnerUpPositions]
+    : availableRunnerUpPositions;
+
   function dispatchUpdate(field, value) {
     dispatch("update", { groupIndex: groupIndex - 1, field, value });
   }
@@ -80,7 +90,7 @@
       on:change={onWinnerPositionSelect}
     >
       <option value="">Position</option>
-      {#each availableWinnerPositions as pos}
+      {#each winnerSelectOptions as pos}
         <option value={pos}>Position {pos}</option>
       {/each}
     </select>
@@ -123,7 +133,7 @@
         disabled={group.winner.position === null}
       >
         <option value="">{group.winner.position === null ? 'Place winner first' : 'Position'}</option>
-        {#each availableRunnerUpPositions as pos}
+        {#each runnerUpSelectOptions as pos}
           <option value={pos}>Position {pos}</option>
         {/each}
       </select>
