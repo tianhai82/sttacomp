@@ -72,7 +72,7 @@
     return Array.from({ length: count }, () => ({
       winner: { na: "", name: "", position: null },
       hasRunnerUp: true,
-      runnerUp: null,
+      runnerUp: { na: "", name: "", position: null },
     }));
   }
 
