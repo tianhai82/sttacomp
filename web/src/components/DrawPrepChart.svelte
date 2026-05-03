@@ -36,12 +36,12 @@
 
   function playerType(raw, pos) {
     const placed = placedPlayers.get(pos);
-    if (placed) return placed.type === 'winner' ? 'winner' : 'runner-up';
+    if (placed) return { kind: placed.type === 'winner' ? 'winner' : 'runner-up', named: !!placed.na || !!placed.name };
     const upper = raw.toUpperCase();
-    if (upper.includes('BYE')) return 'bye';
-    if (upper.includes('WINNER')) return 'winner';
-    if (upper.includes('RUNNER-UP')) return 'runner-up';
-    return '';
+    if (upper.includes('BYE')) return { kind: 'bye', named: false };
+    if (upper.includes('WINNER')) return { kind: 'winner', named: false };
+    if (upper.includes('RUNNER-UP')) return { kind: 'runner-up', named: false };
+    return { kind: '', named: false };
   }
 
   function isMiddleGroup(eighthIndex, groupIndex) {
@@ -51,7 +51,8 @@
 
   function buildPlayer(pos, players) {
     const raw = players[pos - 1] || String(pos);
-    return { pos, label: extractLabel(raw, pos), type: playerType(raw, pos) };
+    const typeInfo = playerType(raw, pos);
+    return { pos, label: extractLabel(raw, pos), kind: typeInfo.kind, named: typeInfo.named };
   }
 
   function buildGroup(startPos, players) {
@@ -107,7 +108,15 @@
                     {#each group as player, i}
                       <div class="flex items-center h-6 text-sm text-gray-800 {i > 0 ? 'border-t border-gray-100' : ''}">
                         <span class="bg-gray-100 font-bold min-w-[24px] h-full flex items-center justify-center border-r border-gray-200 text-gray-700 text-sm">{player.pos}</span>
-                        <span class="flex-1 font-semibold pl-2 truncate {player.type === 'bye' ? 'text-gray-400 italic font-normal' : ''} {player.type === 'winner' ? 'text-green-700' : ''} {player.type === 'runner-up' ? 'text-orange-500' : ''}">
+                        <span class="flex-1 pl-2 truncate
+                          {player.named ? 'font-bold' : 'font-normal'}
+                          {!player.named && player.kind === 'winner' ? 'italic text-green-700 opacity-50' : ''}
+                          {!player.named && player.kind === 'runner-up' ? 'italic text-orange-500 opacity-50' : ''}
+                          {player.named && player.kind === 'winner' ? 'text-green-700' : ''}
+                          {player.named && player.kind === 'runner-up' ? 'text-orange-500' : ''}
+                          {player.kind === 'bye' ? 'italic text-gray-400 opacity-50 font-normal' : ''}
+                          {!player.kind ? 'text-gray-600 opacity-40' : ''}
+                        ">
                           {player.label}
                         </span>
                       </div>
