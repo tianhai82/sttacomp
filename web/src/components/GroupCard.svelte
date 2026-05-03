@@ -91,7 +91,7 @@
     >
       <option value="">Position</option>
       {#each winnerSelectOptions as pos}
-        <option value={pos}>Position {pos}</option>
+        <option value={pos}>{pos}</option>
       {/each}
     </select>
   </div>
@@ -134,7 +134,7 @@
       >
         <option value="">{group.winner.position === null ? 'Place winner first' : 'Position'}</option>
         {#each runnerUpSelectOptions as pos}
-          <option value={pos}>Position {pos}</option>
+          <option value={pos}>{pos}</option>
         {/each}
       </select>
     </div>

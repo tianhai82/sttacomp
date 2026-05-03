@@ -15,8 +15,7 @@
   $: players = allPositions.map(pos => {
     const placed = placedPlayers.get(pos);
     if (placed) {
-      const label = `${pos}: ${placed.name} (${placed.na})`;
-      return label;
+      return `${pos}: ${placed.label || placed.name}`;
     }
     if (byes.includes(pos)) {
       return `${pos}: BYE`;

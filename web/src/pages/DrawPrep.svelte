@@ -44,6 +44,7 @@
               name: group.winner.name || `Winner (Group ${state.groups.indexOf(group) + 1})`,
               na: group.winner.na,
               type: 'winner',
+              label: group.winner.na ? `${group.winner.name || 'Winner'} (${group.winner.na})` : group.winner.name || 'Winner',
             });
           }
           if (group.runnerUp?.position !== null && group.runnerUp?.position !== undefined) {
@@ -51,6 +52,7 @@
               name: group.runnerUp.name || `Runner-up (Group ${state.groups.indexOf(group) + 1})`,
               na: group.runnerUp.na,
               type: 'runnerup',
+              label: group.runnerUp.na ? `${group.runnerUp.name || 'Runner-up'} (${group.runnerUp.na})` : group.runnerUp.name || 'Runner-up',
             });
           }
         }
