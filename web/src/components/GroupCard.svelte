@@ -13,7 +13,7 @@
     ? [group.winner.position, ...availableWinnerPositions]
     : availableWinnerPositions;
 
-  $: runnerUpSelectOptions = group.runnerUp?.position !== null && group.runnerUp.position !== undefined
+  $: runnerUpSelectOptions = group.runnerUp && group.runnerUp.position !== null && group.runnerUp.position !== undefined
     && !availableRunnerUpPositions.includes(group.runnerUp.position)
     ? [group.runnerUp.position, ...availableRunnerUpPositions]
     : availableRunnerUpPositions;
