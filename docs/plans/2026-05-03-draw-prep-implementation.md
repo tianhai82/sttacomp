@@ -45,7 +45,7 @@ Write `positions.ts` with:
   - For each group where `!hasRunnerUp && winner.position !== null` (in group order):
     - Determine half of winner position
     - Find runner-up candidates in opposite half (excluding already removed)
-    - Remove highest-index candidate from runner-ups, add to byes
+    - Remove last candidate in API order from runner-ups, add to byes
 - `getOccupiedPositions(groups: Group[]): Set<number>` — collects all non-null positions
 - `getAvailablePositions(active: number[], occupied: Set<number>): number[]` — filter
 - `isInOppositeHalf(pos: number, winnerPos: number, round: number): boolean`

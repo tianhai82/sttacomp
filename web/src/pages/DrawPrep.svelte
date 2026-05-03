@@ -6,7 +6,7 @@
   import DrawPrepGroups from "../components/DrawPrepGroups.svelte";
   import { getOccupiedPositions, getAvailablePositions, deriveActivePositions, isInOppositeHalf, clearInvalidRunnerUps } from "../lib/positions";
   import { save as storageSave, remove as storageRemove, loadAll, loadMostRecent } from "../lib/storage";
-  import { onMount, tick } from "svelte";
+  import { onMount, onDestroy, tick } from "svelte";
 
   let numGroupsInput = "";
   let fileInput;
@@ -98,7 +98,7 @@
         id: crypto.randomUUID(),
         createdAt: Date.now(),
         numGroups: num,
-        groups: makeEmptyGroups(num),
+        groups: makeEmptyGroups(num), // numGroups always matches groups.length
         round: data.rounds,
         baseWinnerPositions: [...data.winners].sort((a, b) => a - b),
         baseRunnerUpPositions: [...data.runnerups],
@@ -146,10 +146,18 @@
         error = 'Invalid file: must have numGroups and groups';
         return;
       }
+      if (data.numGroups !== data.groups.length) {
+        error = `Invalid file: numGroups (${data.numGroups}) does not match groups array length (${data.groups.length})`;
+        return;
+      }
       for (let i = 0; i < data.groups.length; i++) {
         const g = data.groups[i];
         if (!g.winner || typeof g.hasRunnerUp !== 'boolean') {
           error = `Invalid file: group ${i + 1} is missing winner or hasRunnerUp`;
+          return;
+        }
+        if (g.runnerUp != null && (typeof g.runnerUp.na !== 'string' || typeof g.runnerUp.name !== 'string')) {
+          error = `Invalid file: group ${i + 1} runner-up has invalid fields`;
           return;
         }
       }
@@ -180,7 +188,7 @@
       state = {
         id: crypto.randomUUID(),
         createdAt: Date.now(),
-        numGroups: data.numGroups,
+        numGroups: data.groups.length,
         groups: data.groups,
         round: drawData.rounds,
         baseWinnerPositions: [...drawData.winners].sort((a, b) => a - b),
@@ -198,7 +206,7 @@
   function exportDraw() {
     if (!state) return;
     const data = {
-      numGroups: state.numGroups,
+      numGroups: state.groups.length,
       groups: state.groups,
     };
     const json = JSON.stringify(data, null, 2);
@@ -234,6 +242,11 @@
     }, 500);
   }
 
+  // Clean up auto-save timeout on destroy
+  onDestroy(() => {
+    clearTimeout(saveTimeout);
+  });
+
   // On mount: purge expired entries and load most recent state
   onMount(async () => {
     loadAll(); // purge expired
@@ -241,8 +254,8 @@
     if (recent) {
       try {
         const drawData = await calculateDraws({
-          winners: recent.numGroups,
-          runnerups: recent.numGroups,
+          winners: recent.groups.length,
+          runnerups: recent.groups.length,
         });
         state = {
           ...recent,
@@ -302,7 +315,7 @@
       <div class="md:w-1/2 overflow-y-auto min-h-0">
         <div class="rounded-lg mx-2 p-4 elevation-3 bg-white">
           <h2 class="text-lg font-medium mb-4">
-            Groups ({state.numGroups})
+            Groups ({state.groups.length})
           </h2>
           <DrawPrepGroups
             groups={state.groups}

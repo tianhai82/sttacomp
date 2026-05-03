@@ -61,7 +61,7 @@ interface DrawPrepState {
 - `Player` is shared for winner/runner-up.
 - `hasRunnerUp` defaults to `true`; user unticks it if a group has no runner-up.
 - Positions are mutable (`null` → assigned → can be re-assigned).
-- `base*Positions` are computed by `calculateDraws` assuming all groups have runner-ups. Active positions are derived at render time.
+- `base*Positions` are computed by `calculateDraws` assuming all groups have runner-ups. `baseWinnerPositions` and `baseByePositions` are sorted numerically for display; `baseRunnerUpPositions` preserves the original API order (used for deterministic removal order). Active positions are derived at render time.
 
 ## Position Management
 
@@ -81,10 +81,10 @@ For each group where `hasRunnerUp === false` AND `winner.position !== null` (pro
 
 1. Determine which half the winner is in (top = pos ≤ round/2, bottom = pos > round/2)
 2. Find runner-up candidates in the **opposite** half (excluding already-removed slots)
-3. Remove the candidate with the **highest index**
+3. Remove the **last candidate in API order** (i.e. the last element of `baseRunnerUpPositions` that falls in the opposite half and hasn't been removed yet)
 4. Add that slot to active byes
 
-Multiple groups can have no runner-up. If two groups without runner-ups both have winners in the same half, two runner-up slots are removed from the opposite half (highest indices first).
+Multiple groups can have no runner-up. If two groups without runner-ups both have winners in the same half, two runner-up slots are removed from the opposite half (last in API order first).
 
 ### Dropdown Options
 

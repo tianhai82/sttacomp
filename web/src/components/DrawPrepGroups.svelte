@@ -10,9 +10,14 @@
   export let availableRunnerUpPositionsPerGroup = [];
 
   function handleUpdate(e) {
-    const { groupIndex, field, value } = e.detail;
+    const { groupIndex, field, value, extra } = e.detail;
     const updated = [...groups];
-    updated[groupIndex] = { ...updated[groupIndex], [field]: value };
+    const patch = { [field]: value };
+    // When hasRunnerUp is toggled off, also clear runnerUp data
+    if (field === 'hasRunnerUp' && value === false) {
+      patch.runnerUp = null;
+    }
+    updated[groupIndex] = { ...updated[groupIndex], ...patch, ...extra };
     groups = updated;
     dispatch("change", { groups: updated });
   }

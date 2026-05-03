@@ -44,20 +44,12 @@
 
   function toggleRunnerUp(e) {
     const hasRunnerUp = e.target.checked;
+    const update = { groupIndex: groupIndex - 1, field: "hasRunnerUp", value: hasRunnerUp };
+    // When re-enabling, provide a fresh blank runner-up
     if (hasRunnerUp) {
-      dispatch("update", {
-        groupIndex: groupIndex - 1,
-        field: "runnerUp",
-        value: { na: "", name: "", position: null },
-      });
-    } else {
-      dispatch("update", {
-        groupIndex: groupIndex - 1,
-        field: "runnerUp",
-        value: null,
-      });
+      update.extra = { runnerUp: { na: "", name: "", position: null } };
     }
-    dispatch("update", { groupIndex: groupIndex - 1, field: "hasRunnerUp", value: hasRunnerUp });
+    dispatch("update", update);
   }
 </script>
 
