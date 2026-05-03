@@ -9,6 +9,7 @@
   import { onMount, tick } from "svelte";
 
   let numGroupsInput = "";
+  let fileInput;
   let confirmed = false;
   let error = "";
   let warnings = [];
@@ -107,6 +108,12 @@
     } catch (e) {
       error = e.message || "Failed to calculate draw";
     }
+  }
+
+  function onSetupFileSelected(e) {
+    const file = e.target.files[0];
+    if (file) importDraw(file);
+    e.target.value = '';
   }
 
   function handleGroupsChange(e) {
@@ -271,6 +278,10 @@
         <Button bgColor="bg-red-500" textColor="text-white" on:click={confirmGroups}>
           Confirm
         </Button>
+        <Button bgColor="bg-gray-500" textColor="text-white" on:click={() => fileInput.click()}>
+          Import
+        </Button>
+        <input bind:this={fileInput} type="file" accept=".json" class="hidden" on:change={onSetupFileSelected} />
       </div>
       {#if error}
         <div class="text-red-600 text-sm">{error}</div>
