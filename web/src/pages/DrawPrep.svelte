@@ -285,7 +285,7 @@
         {/each}
       </div>
     {/if}
-    <div class="flex flex-col md:flex-row gap-4">
+    <div class="flex flex-col md:flex-row gap-4 flex-1">
       <!-- Left panel: Groups form -->
       <div class="md:w-1/2 overflow-y-auto max-h-[calc(100vh-8rem)]">
         <div class="rounded-lg mx-2 p-4 elevation-3 bg-white">
