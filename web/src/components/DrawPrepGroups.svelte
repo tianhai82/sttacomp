@@ -1,7 +1,9 @@
 <!-- web/src/components/DrawPrepGroups.svelte -->
 <script>
+  import { createEventDispatcher } from "svelte";
   import GroupCard from "./GroupCard.svelte";
   import { Button } from "svetamat";
+  const dispatch = createEventDispatcher();
 
   export let groups = [];
   export let availableWinnerPositions = [];

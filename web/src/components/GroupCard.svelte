@@ -1,5 +1,8 @@
 <!-- web/src/components/GroupCard.svelte -->
 <script>
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
+
   export let group;
   export let groupIndex = 1; // 1-based
   export let availableWinnerPositions = [];
