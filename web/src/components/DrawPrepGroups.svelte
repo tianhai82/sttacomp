@@ -14,6 +14,20 @@
     groups = updated;
     dispatch("change", { groups: updated });
   }
+
+  let fileInput;
+
+  function triggerImport() {
+    fileInput.click();
+  }
+
+  function onFileSelected(e) {
+    const file = e.target.files[0];
+    if (file) {
+      dispatch("import", { file });
+    }
+    e.target.value = '';
+  }
 </script>
 
 <div>
@@ -27,12 +41,15 @@
     />
   {/each}
 
-  <!-- Action buttons (non-functional until later tasks) -->
+  <!-- Hidden file input for import -->
+  <input bind:this={fileInput} type="file" accept=".json" class="hidden" on:change={onFileSelected} />
+
+  <!-- Action buttons -->
   <div class="flex gap-3 mt-4 px-1">
     <Button bgColor="bg-blue-500" textColor="text-white" on:click={() => dispatch("export")}>
       Export
     </Button>
-    <Button bgColor="bg-gray-500" textColor="text-white">
+    <Button bgColor="bg-gray-500" textColor="text-white" on:click={triggerImport}>
       Import
     </Button>
     <Button bgColor="bg-red-700" textColor="text-white">

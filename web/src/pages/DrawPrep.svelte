@@ -124,6 +124,65 @@
     state = { ...state, groups: finalGroups };
   }
 
+  async function importDraw(file) {
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+
+      // Validate structure
+      if (typeof data.numGroups !== 'number' || !Array.isArray(data.groups)) {
+        error = 'Invalid file: must have numGroups and groups';
+        return;
+      }
+      for (let i = 0; i < data.groups.length; i++) {
+        const g = data.groups[i];
+        if (!g.winner || typeof g.hasRunnerUp !== 'boolean') {
+          error = `Invalid file: group ${i + 1} is missing winner or hasRunnerUp`;
+          return;
+        }
+      }
+
+      // Recompute base positions from group count
+      const drawData = await calculateDraws({
+        winners: data.numGroups,
+        runnerups: data.numGroups,
+      });
+
+      // Validate placed positions within ranges
+      const allPositions = [...drawData.winners, ...drawData.runnerups, ...drawData.byes];
+      const posSet = new Set(allPositions);
+      for (let i = 0; i < data.groups.length; i++) {
+        const g = data.groups[i];
+        if (g.winner.position !== null && g.winner.position !== undefined && !posSet.has(g.winner.position)) {
+          error = `Invalid file: group ${i + 1} winner position ${g.winner.position} is out of range`;
+          return;
+        }
+        if (g.runnerUp && g.runnerUp.position !== null && g.runnerUp.position !== undefined && !posSet.has(g.runnerUp.position)) {
+          error = `Invalid file: group ${i + 1} runner-up position ${g.runnerUp.position} is out of range`;
+          return;
+        }
+      }
+
+      if (!confirm('Importing will replace the current draw. Continue?')) return;
+
+      state = {
+        id: crypto.randomUUID(),
+        createdAt: Date.now(),
+        numGroups: data.numGroups,
+        groups: data.groups,
+        round: drawData.rounds,
+        baseWinnerPositions: drawData.winners,
+        baseRunnerUpPositions: drawData.runnerups,
+        baseByePositions: drawData.byes,
+      };
+      confirmed = true;
+      error = '';
+      warnings = [];
+    } catch (e) {
+      error = 'Failed to import: ' + (e.message || 'unknown error');
+    }
+  }
+
   function exportDraw() {
     if (!state) return;
     const data = {
@@ -189,6 +248,7 @@
             availableRunnerUpPositionsPerGroup={availableRunnerUpPositionsPerGroup}
             on:change={handleGroupsChange}
             on:export={exportDraw}
+            on:import={(e) => importDraw(e.detail.file)}
           />
         </div>
       </div>

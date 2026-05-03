@@ -15,6 +15,6 @@ Last updated: 2026-05-03T03:16:00Z
 | 6 | ✅ done | Winner position dropdown and occupy tracking (checkpoint: done) | 07831f9 |
 | 7 | ✅ done | Runner-up position dropdown with half constraint (checkpoint: done) | ea9233b |
 | 8 | ✅ done | Cascade on winner reposition (checkpoint: done) | d009c1d |
-| 9 | 🔄 in-progress | Export to JSON file | — |
-| 10 | ⬜ pending | Import from JSON file | — |
+| 9 | ✅ done | Export to JSON file | $(git log --oneline -1 | cut -d' ' -f1) |
+| 10 | 🔄 in-progress | Import from JSON file | — |
 | 11 | ⬜ pending | Reset and auto-save with 7-day expiry | — |
