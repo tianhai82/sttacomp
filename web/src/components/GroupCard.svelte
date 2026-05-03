@@ -18,6 +18,12 @@
     ? [group.runnerUp.position, ...availableRunnerUpPositions]
     : availableRunnerUpPositions;
 
+  // Local bind variables for selects — avoids Svelte index-based reconciliation bug
+  let localWinnerPos = '';
+  let localRunnerUpPos = '';
+  $: localWinnerPos = group.winner.position ?? '';
+  $: localRunnerUpPos = group.runnerUp?.position ?? '';
+
   function dispatchUpdate(field, value) {
     dispatch("update", { groupIndex: groupIndex - 1, field, value });
   }
@@ -49,18 +55,6 @@
     }
     dispatch("update", { groupIndex: groupIndex - 1, field: "hasRunnerUp", value: hasRunnerUp });
   }
-
-  function onWinnerPositionSelect(e) {
-    const val = e.target.value;
-    const pos = val === "" ? null : parseInt(val, 10);
-    dispatchWinnerUpdate("position", pos);
-  }
-
-  function onRunnerUpPositionSelect(e) {
-    const val = e.target.value;
-    const pos = val === "" ? null : parseInt(val, 10);
-    dispatchRunnerUpUpdate("position", pos);
-  }
 </script>
 
 <div class="border border-gray-200 rounded-lg p-3 mb-3 shadow-sm">
@@ -86,8 +80,11 @@
     />
     <select
       class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-red-500"
-      value={group.winner.position ?? ""}
-      on:change={onWinnerPositionSelect}
+      bind:value={localWinnerPos}
+      on:change={() => {
+        const pos = localWinnerPos === '' ? null : parseInt(localWinnerPos, 10);
+        dispatchWinnerUpdate('position', pos);
+      }}
     >
       <option value="">Position</option>
       {#each winnerSelectOptions as pos}
@@ -128,8 +125,11 @@
       />
       <select
         class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-red-500"
-        value={group.runnerUp.position ?? ""}
-        on:change={onRunnerUpPositionSelect}
+        bind:value={localRunnerUpPos}
+        on:change={() => {
+          const pos = localRunnerUpPos === '' ? null : parseInt(localRunnerUpPos, 10);
+          dispatchRunnerUpUpdate('position', pos);
+        }}
         disabled={group.winner.position === null}
       >
         <option value="">{group.winner.position === null ? 'Place winner first' : 'Position'}</option>
