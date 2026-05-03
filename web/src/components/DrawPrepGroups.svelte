@@ -4,6 +4,7 @@
   import { Button } from "svetamat";
 
   export let groups = [];
+  export let availableWinnerPositions = [];
 
   function handleUpdate(e) {
     const { groupIndex, field, value } = e.detail;
@@ -16,7 +17,12 @@
 
 <div>
   {#each groups as group, i}
-    <GroupCard {group} groupIndex={i + 1} on:update={handleUpdate} />
+    <GroupCard
+      {group}
+      groupIndex={i + 1}
+      {availableWinnerPositions}
+      on:update={handleUpdate}
+    />
   {/each}
 
   <!-- Action buttons (non-functional until later tasks) -->

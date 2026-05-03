@@ -4,6 +4,7 @@
   import { calculateDraws } from "../lib/calculateDraw";
   import DrawPrepChart from "../components/DrawPrepChart.svelte";
   import DrawPrepGroups from "../components/DrawPrepGroups.svelte";
+  import { getOccupiedPositions, getAvailablePositions } from "../lib/positions";
   import type { DrawPrepState, Group } from "../lib/types";
 
   let numGroupsInput = "";
@@ -11,13 +12,45 @@
   let error = "";
   let state = null; // DrawPrepState | null
 
+  // Occupied positions derived reactively from groups
+  $: occupiedPositions = state ? getOccupiedPositions(state.groups) : new Set();
+
+  // Available winner positions: base winners minus occupied
+  $: availableWinnerPositions = state
+    ? getAvailablePositions(state.baseWinnerPositions, occupiedPositions)
+    : [];
+
+  // Placed players map for the chart: position -> {name, na, type}
+  $: placedPlayers = state
+    ? (() => {
+        const map = new Map();
+        for (const group of state.groups) {
+          if (group.winner.position !== null) {
+            map.set(group.winner.position, {
+              name: group.winner.name || `Winner (Group ${state.groups.indexOf(group) + 1})`,
+              na: group.winner.na,
+              type: 'winner',
+            });
+          }
+          if (group.runnerUp?.position !== null && group.runnerUp?.position !== undefined) {
+            map.set(group.runnerUp.position, {
+              name: group.runnerUp.name || `Runner-up (Group ${state.groups.indexOf(group) + 1})`,
+              na: group.runnerUp.na,
+              type: 'runnerup',
+            });
+          }
+        }
+        return map;
+      })()
+    : new Map();
+
   $: chartProps = state
     ? {
         round: state.round,
         winners: state.baseWinnerPositions,
         runnerups: state.baseRunnerUpPositions,
         byes: state.baseByePositions,
-        placedPlayers: new Map(),
+        placedPlayers,
       }
     : null;
 
@@ -91,7 +124,11 @@
           <h2 class="text-lg font-medium mb-4">
             Groups ({state.numGroups})
           </h2>
-          <DrawPrepGroups groups={state.groups} on:change={(e) => { state = { ...state, groups: e.detail.groups }; }} />
+          <DrawPrepGroups
+            groups={state.groups}
+            availableWinnerPositions={availableWinnerPositions}
+            on:change={(e) => { state = { ...state, groups: e.detail.groups }; }}
+          />
         </div>
       </div>
       <!-- Right panel: KO Chart -->

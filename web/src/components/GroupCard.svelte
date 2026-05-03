@@ -2,11 +2,9 @@
 <script>
   export let group;
   export let groupIndex = 1; // 1-based
+  export let availableWinnerPositions = [];
 
   function dispatchUpdate(field, value) {
-    group = { ...group, [field]: value };
-    // Svelte reactivity: the parent should update via the binding
-    // We dispatch a custom event for the parent to handle
     dispatch("update", { groupIndex: groupIndex - 1, field, value });
   }
 
@@ -37,13 +35,19 @@
     }
     dispatch("update", { groupIndex: groupIndex - 1, field: "hasRunnerUp", value: hasRunnerUp });
   }
+
+  function onWinnerPositionSelect(e) {
+    const val = e.target.value;
+    const pos = val === "" ? null : parseInt(val, 10);
+    dispatchWinnerUpdate("position", pos);
+  }
 </script>
 
 <div class="border border-gray-200 rounded-lg p-3 mb-3 shadow-sm">
   <h3 class="font-bold text-sm text-gray-700 mb-2">Group {groupIndex}</h3>
 
   <!-- Winner row -->
-  <div class="flex items-center gap-2 mb-2">
+  <div class="flex items-center gap-2 mb-2 flex-wrap">
     <span class="text-xs font-medium text-green-700 w-16">Winner</span>
     <input
       type="text"
@@ -56,10 +60,20 @@
     <input
       type="text"
       placeholder="Name"
-      class="border border-gray-300 rounded px-2 py-1 flex-1 text-sm focus:outline-none focus:border-red-500"
+      class="border border-gray-300 rounded px-2 py-1 flex-1 min-w-[100px] text-sm focus:outline-none focus:border-red-500"
       value={group.winner.name}
       on:input={(e) => dispatchWinnerUpdate("name", e.target.value)}
     />
+    <select
+      class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-red-500"
+      value={group.winner.position ?? ""}
+      on:change={onWinnerPositionSelect}
+    >
+      <option value="">Position</option>
+      {#each availableWinnerPositions as pos}
+        <option value={pos}>Position {pos}</option>
+      {/each}
+    </select>
   </div>
 
   <!-- Runner-up checkbox -->
@@ -75,7 +89,7 @@
 
   <!-- Runner-up row -->
   {#if group.hasRunnerUp && group.runnerUp}
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 flex-wrap">
       <span class="text-xs font-medium text-orange-500 w-16">Runner-up</span>
       <input
         type="text"
@@ -88,7 +102,7 @@
       <input
         type="text"
         placeholder="Name"
-        class="border border-gray-300 rounded px-2 py-1 flex-1 text-sm focus:outline-none focus:border-red-500"
+        class="border border-gray-300 rounded px-2 py-1 flex-1 min-w-[100px] text-sm focus:outline-none focus:border-red-500"
         value={group.runnerUp.name}
         on:input={(e) => dispatchRunnerUpUpdate("name", e.target.value)}
       />
