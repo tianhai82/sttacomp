@@ -4,12 +4,12 @@
   import { calculateDraws } from "../lib/calculateDraw";
   import DrawPrepChart from "../components/DrawPrepChart.svelte";
   import DrawPrepGroups from "../components/DrawPrepGroups.svelte";
-  import { getOccupiedPositions, getAvailablePositions, deriveActivePositions, isInOppositeHalf } from "../lib/positions";
-  import type { DrawPrepState, Group } from "../lib/types";
+  import { getOccupiedPositions, getAvailablePositions, deriveActivePositions, isInOppositeHalf, clearInvalidRunnerUps } from "../lib/positions";
 
   let numGroupsInput = "";
   let confirmed = false;
   let error = "";
+  let warnings = [];
   let state = null; // DrawPrepState | null
 
   // Occupied positions derived reactively from groups
@@ -66,7 +66,7 @@
       }
     : null;
 
-  function makeEmptyGroups(count: number): Group[] {
+  function makeEmptyGroups(count) {
     return Array.from({ length: count }, () => ({
       winner: { na: "", name: "", position: null },
       hasRunnerUp: true,
@@ -103,6 +103,26 @@
       error = e.message || "Failed to calculate draw";
     }
   }
+
+  function handleGroupsChange(e) {
+    const newGroups = e.detail.groups;
+    let finalGroups = newGroups;
+
+    // Cascade: check if any runner-up positions became invalid
+    if (state) {
+      const tempState = { ...state, groups: finalGroups };
+      const active = deriveActivePositions(tempState);
+      const { groups: clearedGroups, cleared } = clearInvalidRunnerUps(finalGroups, active, state.round);
+
+      if (cleared.length > 0) {
+        finalGroups = clearedGroups;
+        warnings = cleared.map(i => `Group ${i + 1} runner-up position cleared (no longer valid)`);
+        setTimeout(() => { warnings = []; }, 4000);
+      }
+    }
+
+    state = { ...state, groups: finalGroups };
+  }
 </script>
 
 <div class="container mx-auto pt-3 px-3 flex flex-col">
@@ -129,6 +149,15 @@
       {/if}
     </div>
   {:else if state}
+    {#if warnings.length > 0}
+      <div class="mx-2 mb-2">
+        {#each warnings as warning}
+          <div class="bg-yellow-50 border border-yellow-300 text-yellow-800 text-sm rounded px-3 py-2 mb-1">
+            ⚠ {warning}
+          </div>
+        {/each}
+      </div>
+    {/if}
     <div class="flex flex-col md:flex-row gap-4">
       <!-- Left panel: Groups form -->
       <div class="md:w-1/2 overflow-y-auto max-h-[calc(100vh-8rem)]">
@@ -140,7 +169,7 @@
             groups={state.groups}
             availableWinnerPositions={availableWinnerPositions}
             availableRunnerUpPositionsPerGroup={availableRunnerUpPositionsPerGroup}
-            on:change={(e) => { state = { ...state, groups: e.detail.groups }; }}
+            on:change={handleGroupsChange}
           />
         </div>
       </div>

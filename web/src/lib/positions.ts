@@ -82,3 +82,61 @@ export function isInOppositeHalf(
   const winnerInTop = winnerPos <= half;
   return posInTop !== winnerInTop;
 }
+
+/**
+ * Finds group indices where runner-up positions are no longer valid.
+ *
+ * A runner-up position is invalid if:
+ * 1. It's no longer in the active runner-up positions (slot was reclassified), OR
+ * 2. It's no longer in the opposite half of the group's winner position
+ */
+export function findInvalidRunnerUpIndices(
+  groups: Group[],
+  activePositions: ActivePositions,
+  round: number
+): number[] {
+  const activeRunnerUpSet = new Set(activePositions.runnerups);
+  const invalid: number[] = [];
+
+  for (let i = 0; i < groups.length; i++) {
+    const group = groups[i];
+    if (group.winner.position === null || !group.runnerUp || group.runnerUp.position === null) continue;
+
+    const runnerUpPos = group.runnerUp.position;
+    const winnerPos = group.winner.position;
+
+    // Check: is the runner-up slot still active?
+    if (!activeRunnerUpSet.has(runnerUpPos)) {
+      invalid.push(i);
+      continue;
+    }
+
+    // Check: is the runner-up still in the opposite half?
+    if (!isInOppositeHalf(runnerUpPos, winnerPos, round)) {
+      invalid.push(i);
+    }
+  }
+
+  return invalid;
+}
+
+/**
+ * Clears invalid runner-up positions, returning updated groups and cleared indices.
+ * Preserves runner-up name and NA — only the position is nulled.
+ */
+export function clearInvalidRunnerUps(
+  groups: Group[],
+  activePositions: ActivePositions,
+  round: number
+): { groups: Group[]; cleared: number[] } {
+  const cleared = findInvalidRunnerUpIndices(groups, activePositions, round);
+  if (cleared.length === 0) return { groups, cleared: [] };
+
+  const clearedSet = new Set(cleared);
+  const updated = groups.map((g, i) => {
+    if (!clearedSet.has(i) || !g.runnerUp) return g;
+    return { ...g, runnerUp: { ...g.runnerUp, position: null } };
+  });
+
+  return { groups: updated, cleared };
+}
