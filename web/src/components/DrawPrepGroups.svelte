@@ -52,7 +52,7 @@
     <Button bgColor="bg-gray-500" textColor="text-white" on:click={triggerImport}>
       Import
     </Button>
-    <Button bgColor="bg-red-700" textColor="text-white">
+    <Button bgColor="bg-red-700" textColor="text-white" on:click={() => dispatch("reset")}>
       Reset
     </Button>
   </div>

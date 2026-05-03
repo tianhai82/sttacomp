@@ -1,6 +1,6 @@
 // web/src/lib/storage.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { save, load, loadAll, remove } from "./storage";
+import { save, load, loadAll, remove, loadMostRecent } from "./storage";
 import type { DrawPrepState } from "./types";
 
 // Mock localStorage
@@ -109,6 +109,35 @@ describe("storage", () => {
 
       save(expired);
       expect(load("expired-direct")).toBeNull();
+    });
+  });
+
+  describe("loadMostRecent", () => {
+    it("returns the entry with the latest createdAt", () => {
+      const old = makeState({ id: "old", createdAt: Date.now() - 1000 });
+      const newer = makeState({ id: "newer", createdAt: Date.now() - 500 });
+      const newest = makeState({ id: "newest", createdAt: Date.now() });
+      save(old);
+      save(newer);
+      save(newest);
+
+      const result = loadMostRecent();
+      expect(result!.id).toBe("newest");
+    });
+
+    it("returns null when store is empty", () => {
+      expect(loadMostRecent()).toBeNull();
+    });
+
+    it("skips expired entries", () => {
+      const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+      const fresh = makeState({ id: "fresh", createdAt: Date.now() });
+      const expired = makeState({ id: "expired", createdAt: Date.now() - sevenDaysMs - 1 });
+      save(fresh);
+      save(expired);
+
+      const result = loadMostRecent();
+      expect(result!.id).toBe("fresh");
     });
   });
 });

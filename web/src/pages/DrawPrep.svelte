@@ -5,6 +5,8 @@
   import DrawPrepChart from "../components/DrawPrepChart.svelte";
   import DrawPrepGroups from "../components/DrawPrepGroups.svelte";
   import { getOccupiedPositions, getAvailablePositions, deriveActivePositions, isInOppositeHalf, clearInvalidRunnerUps } from "../lib/positions";
+  import { save as storageSave, remove as storageRemove, loadAll, loadMostRecent } from "../lib/storage";
+  import { onMount, tick } from "svelte";
 
   let numGroupsInput = "";
   let confirmed = false;
@@ -200,6 +202,52 @@
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
+
+  function resetDraw() {
+    if (!confirm('Reset will clear all data. Continue?')) return;
+    if (state) {
+      storageRemove(state.id);
+    }
+    state = null;
+    confirmed = false;
+    numGroupsInput = '';
+    error = '';
+    warnings = [];
+  }
+
+  // Auto-save: debounce and save on state change
+  let saveTimeout;
+  $: if (state) {
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+      storageSave(state);
+    }, 500);
+  }
+
+  // On mount: purge expired entries and load most recent state
+  onMount(async () => {
+    loadAll(); // purge expired
+    const recent = loadMostRecent();
+    if (recent) {
+      try {
+        const drawData = await calculateDraws({
+          winners: recent.numGroups,
+          runnerups: recent.numGroups,
+        });
+        state = {
+          ...recent,
+          round: drawData.rounds,
+          baseWinnerPositions: drawData.winners,
+          baseRunnerUpPositions: drawData.runnerups,
+          baseByePositions: drawData.byes,
+        };
+        confirmed = true;
+      } catch (e) {
+        // If recalculation fails, skip auto-load
+        storageRemove(recent.id);
+      }
+    }
+  });
 </script>
 
 <div class="container mx-auto pt-3 px-3 flex flex-col">
@@ -249,6 +297,7 @@
             on:change={handleGroupsChange}
             on:export={exportDraw}
             on:import={(e) => importDraw(e.detail.file)}
+            on:reset={resetDraw}
           />
         </div>
       </div>

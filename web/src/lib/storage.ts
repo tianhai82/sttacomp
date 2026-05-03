@@ -61,3 +61,12 @@ export function remove(id: string): void {
   delete store[id];
   setStore(store);
 }
+
+export function loadMostRecent(): DrawPrepState | null {
+  const all = loadAll();
+  const entries = Object.values(all);
+  if (entries.length === 0) return null;
+  return entries.reduce((mostRecent, entry) =>
+    entry.createdAt > mostRecent.createdAt ? entry : mostRecent
+  );
+}
