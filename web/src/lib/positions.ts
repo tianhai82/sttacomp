@@ -51,8 +51,9 @@ export function getOccupiedPositions(groups: Group[]): Set<number> {
     if (group.winner.position !== null) {
       occupied.add(group.winner.position);
     }
-    if (group.runnerUp?.position !== null && group.runnerUp?.position !== undefined) {
-      occupied.add(group.runnerUp.position);
+    const ruPos = group.runnerUp?.position;
+    if (ruPos !== null && ruPos !== undefined) {
+      occupied.add(ruPos);
     }
   }
   return occupied;
@@ -100,19 +101,12 @@ export function findInvalidRunnerUpIndices(
 
   for (let i = 0; i < groups.length; i++) {
     const group = groups[i];
-    if (group.winner.position === null || !group.runnerUp || group.runnerUp.position === null) continue;
+    if (!group.runnerUp || group.runnerUp.position === null || group.winner.position === null) continue;
 
     const runnerUpPos = group.runnerUp.position;
     const winnerPos = group.winner.position;
 
-    // Check: is the runner-up slot still active?
-    if (!activeRunnerUpSet.has(runnerUpPos)) {
-      invalid.push(i);
-      continue;
-    }
-
-    // Check: is the runner-up still in the opposite half?
-    if (!isInOppositeHalf(runnerUpPos, winnerPos, round)) {
+    if (!activeRunnerUpSet.has(runnerUpPos) || !isInOppositeHalf(runnerUpPos, winnerPos, round)) {
       invalid.push(i);
     }
   }

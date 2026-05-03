@@ -6,7 +6,7 @@
   import DrawPrepGroups from "../components/DrawPrepGroups.svelte";
   import { getOccupiedPositions, getAvailablePositions, deriveActivePositions, isInOppositeHalf, clearInvalidRunnerUps } from "../lib/positions";
   import { save as storageSave, remove as storageRemove, loadAll, loadMostRecent } from "../lib/storage";
-  import { onMount, onDestroy, tick } from "svelte";
+  import { onMount, onDestroy } from "svelte";
 
   let numGroupsInput = "";
   let fileInput;
@@ -36,28 +36,34 @@
       })
     : [];
 
+  function playerLabel(player, fallback) {
+    const name = player.name || fallback;
+    return player.na ? `${name} (${player.na})` : name;
+  }
+
   // Placed players map for the chart: position -> {name, na, type}
   $: placedPlayers = state
     ? (() => {
         const map = new Map();
-        for (const group of state.groups) {
+        state.groups.forEach((group, idx) => {
           if (group.winner.position !== null) {
             map.set(group.winner.position, {
-              name: group.winner.name || `Winner (Group ${state.groups.indexOf(group) + 1})`,
+              name: group.winner.name || `Winner (Group ${idx + 1})`,
               na: group.winner.na,
               type: 'winner',
-              label: group.winner.na ? `${group.winner.name || 'Winner'} (${group.winner.na})` : group.winner.name || 'Winner',
+              label: playerLabel(group.winner, `Winner (Group ${idx + 1})`),
             });
           }
-          if (group.runnerUp?.position !== null && group.runnerUp?.position !== undefined) {
-            map.set(group.runnerUp.position, {
-              name: group.runnerUp.name || `Runner-up (Group ${state.groups.indexOf(group) + 1})`,
+          const ruPos = group.runnerUp?.position;
+          if (ruPos != null) {
+            map.set(ruPos, {
+              name: group.runnerUp.name || `Runner-up (Group ${idx + 1})`,
               na: group.runnerUp.na,
               type: 'runnerup',
-              label: group.runnerUp.na ? `${group.runnerUp.name || 'Runner-up'} (${group.runnerUp.na})` : group.runnerUp.name || 'Runner-up',
+              label: playerLabel(group.runnerUp, `Runner-up (Group ${idx + 1})`),
             });
           }
-        }
+        });
         return map;
       })()
     : new Map();
@@ -72,11 +78,13 @@
       }
     : null;
 
+  const EMPTY_PLAYER = { na: "", name: "", position: null };
+
   function makeEmptyGroups(count) {
     return Array.from({ length: count }, () => ({
-      winner: { na: "", name: "", position: null },
+      winner: { ...EMPTY_PLAYER },
       hasRunnerUp: true,
-      runnerUp: { na: "", name: "", position: null },
+      runnerUp: { ...EMPTY_PLAYER },
     }));
   }
 
@@ -89,21 +97,8 @@
     error = "";
 
     try {
-      const data = await calculateDraws({
-        winners: num,
-        runnerups: num,
-      });
-
-      state = {
-        id: crypto.randomUUID(),
-        createdAt: Date.now(),
-        numGroups: num,
-        groups: makeEmptyGroups(num), // numGroups always matches groups.length
-        round: data.rounds,
-        baseWinnerPositions: [...data.winners].sort((a, b) => a - b),
-        baseRunnerUpPositions: [...data.runnerups],
-        baseByePositions: [...data.byes].sort((a, b) => a - b),
-      };
+      const data = await computeDrawData(num);
+      state = buildState(num, makeEmptyGroups(num), data);
       confirmed = true;
     } catch (e) {
       error = e.message || "Failed to calculate draw";
@@ -163,21 +158,22 @@
       }
 
       // Recompute base positions from group count
-      const drawData = await calculateDraws({
-        winners: data.numGroups,
-        runnerups: data.numGroups,
-      });
+      const drawData = await computeDrawData(data.numGroups);
 
       // Validate placed positions within ranges
-      const allPositions = [...drawData.winners, ...drawData.runnerups, ...drawData.byes];
+      const allPositions = [
+        ...drawData.baseWinnerPositions,
+        ...drawData.baseRunnerUpPositions,
+        ...drawData.baseByePositions,
+      ];
       const posSet = new Set(allPositions);
       for (let i = 0; i < data.groups.length; i++) {
         const g = data.groups[i];
-        if (g.winner.position !== null && g.winner.position !== undefined && !posSet.has(g.winner.position)) {
+        if (g.winner.position != null && !posSet.has(g.winner.position)) {
           error = `Invalid file: group ${i + 1} winner position ${g.winner.position} is out of range`;
           return;
         }
-        if (g.runnerUp && g.runnerUp.position !== null && g.runnerUp.position !== undefined && !posSet.has(g.runnerUp.position)) {
+        if (g.runnerUp?.position != null && !posSet.has(g.runnerUp.position)) {
           error = `Invalid file: group ${i + 1} runner-up position ${g.runnerUp.position} is out of range`;
           return;
         }
@@ -185,16 +181,7 @@
 
       if (!confirm('Importing will replace the current draw. Continue?')) return;
 
-      state = {
-        id: crypto.randomUUID(),
-        createdAt: Date.now(),
-        numGroups: data.groups.length,
-        groups: data.groups,
-        round: drawData.rounds,
-        baseWinnerPositions: [...drawData.winners].sort((a, b) => a - b),
-        baseRunnerUpPositions: [...drawData.runnerups],
-        baseByePositions: [...drawData.byes].sort((a, b) => a - b),
-      };
+      state = buildState(data.groups.length, data.groups, drawData);
       confirmed = true;
       error = '';
       warnings = [];
@@ -247,28 +234,38 @@
     clearTimeout(saveTimeout);
   });
 
+  async function computeDrawData(numGroups) {
+    const data = await calculateDraws({ winners: numGroups, runnerups: numGroups });
+    return {
+      round: data.rounds,
+      baseWinnerPositions: [...data.winners].sort((a, b) => a - b),
+      baseRunnerUpPositions: [...data.runnerups],
+      baseByePositions: [...data.byes].sort((a, b) => a - b),
+    };
+  }
+
+  function buildState(numGroups, groups, drawData) {
+    return {
+      id: crypto.randomUUID(),
+      createdAt: Date.now(),
+      numGroups,
+      groups,
+      ...drawData,
+    };
+  }
+
   // On mount: purge expired entries and load most recent state
   onMount(async () => {
     loadAll(); // purge expired
     const recent = loadMostRecent();
-    if (recent) {
-      try {
-        const drawData = await calculateDraws({
-          winners: recent.groups.length,
-          runnerups: recent.groups.length,
-        });
-        state = {
-          ...recent,
-          round: drawData.rounds,
-          baseWinnerPositions: [...drawData.winners].sort((a, b) => a - b),
-          baseRunnerUpPositions: [...drawData.runnerups],
-          baseByePositions: [...drawData.byes].sort((a, b) => a - b),
-        };
-        confirmed = true;
-      } catch (e) {
-        // If recalculation fails, skip auto-load
-        storageRemove(recent.id);
-      }
+    if (!recent) return;
+
+    try {
+      const drawData = await computeDrawData(recent.groups.length);
+      state = { ...recent, ...drawData };
+      confirmed = true;
+    } catch (e) {
+      storageRemove(recent.id);
     }
   });
 </script>

@@ -13,7 +13,7 @@
     ? [group.winner.position, ...availableWinnerPositions]
     : availableWinnerPositions;
 
-  $: runnerUpSelectOptions = group.runnerUp && group.runnerUp.position !== null && group.runnerUp.position !== undefined
+  $: runnerUpSelectOptions = group.runnerUp?.position != null
     && !availableRunnerUpPositions.includes(group.runnerUp.position)
     ? [group.runnerUp.position, ...availableRunnerUpPositions]
     : availableRunnerUpPositions;
@@ -27,8 +27,10 @@
     dispatch("update", { groupIndex: groupIndex - 1, field: "winner", value: winner });
   }
 
+  const EMPTY_RUNNER_UP = { na: "", name: "", position: null };
+
   function dispatchRunnerUpUpdate(field, value) {
-    const runnerUp = group.runnerUp ? { ...group.runnerUp, [field]: value } : { na: "", name: "", position: null, [field]: value };
+    const runnerUp = { ...(group.runnerUp || EMPTY_RUNNER_UP), [field]: value };
     dispatch("update", { groupIndex: groupIndex - 1, field: "runnerUp", value: runnerUp });
   }
 
