@@ -287,8 +287,7 @@
     {/if}
     <div class="flex flex-col md:flex-row gap-4 flex-1">
       <!-- Left panel: Groups form -->
-      <div class="md:w-1/2 overflow-y-auto max-h-[calc(100vh-8rem)]">
-        <div class="rounded-lg mx-2 p-4 elevation-3 bg-white">
+      <div class="md:w-1/2 overflow-y-auto min-h-0">
           <h2 class="text-lg font-medium mb-4">
             Groups ({state.numGroups})
           </h2>
@@ -304,7 +303,7 @@
         </div>
       </div>
       <!-- Right panel: KO Chart -->
-      <div class="md:w-1/2 overflow-y-auto max-h-[calc(100vh-8rem)]">
+      <div class="md:w-1/2 overflow-y-auto min-h-0">
         <div class="rounded-lg mx-2 py-4 px-4 overflow-x-auto bg-white">
           <h2 class="text-lg font-medium mb-4">Knockout Chart</h2>
           <DrawPrepChart {...chartProps} />
