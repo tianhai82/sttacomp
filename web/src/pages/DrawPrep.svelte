@@ -123,6 +123,24 @@
 
     state = { ...state, groups: finalGroups };
   }
+
+  function exportDraw() {
+    if (!state) return;
+    const data = {
+      numGroups: state.numGroups,
+      groups: state.groups,
+    };
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `draw-prep-${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 </script>
 
 <div class="container mx-auto pt-3 px-3 flex flex-col">
@@ -170,6 +188,7 @@
             availableWinnerPositions={availableWinnerPositions}
             availableRunnerUpPositionsPerGroup={availableRunnerUpPositionsPerGroup}
             on:change={handleGroupsChange}
+            on:export={exportDraw}
           />
         </div>
       </div>

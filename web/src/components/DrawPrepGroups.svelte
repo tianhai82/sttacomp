@@ -29,7 +29,7 @@
 
   <!-- Action buttons (non-functional until later tasks) -->
   <div class="flex gap-3 mt-4 px-1">
-    <Button bgColor="bg-blue-500" textColor="text-white">
+    <Button bgColor="bg-blue-500" textColor="text-white" on:click={() => dispatch("export")}>
       Export
     </Button>
     <Button bgColor="bg-gray-500" textColor="text-white">
