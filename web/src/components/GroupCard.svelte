@@ -18,18 +18,6 @@
     ? [group.runnerUp.position, ...availableRunnerUpPositions]
     : availableRunnerUpPositions;
 
-  // Local bind variables for selects — avoids Svelte index-based reconciliation bug
-  let localWinnerPos = '';
-  let localRunnerUpPos = '';
-  $: {
-    const wp = group.winner.position !== null ? String(group.winner.position) : '';
-    if (wp !== String(localWinnerPos)) localWinnerPos = wp;
-  }
-  $: {
-    const rp = group.runnerUp && group.runnerUp.position !== null ? String(group.runnerUp.position) : '';
-    if (rp !== String(localRunnerUpPos)) localRunnerUpPos = rp;
-  }
-
   function dispatchUpdate(field, value) {
     dispatch("update", { groupIndex: groupIndex - 1, field, value });
   }
@@ -42,6 +30,16 @@
   function dispatchRunnerUpUpdate(field, value) {
     const runnerUp = group.runnerUp ? { ...group.runnerUp, [field]: value } : { na: "", name: "", position: null, [field]: value };
     dispatch("update", { groupIndex: groupIndex - 1, field: "runnerUp", value: runnerUp });
+  }
+
+  function onWinnerPositionSelect(e) {
+    const val = e.target.value;
+    dispatchWinnerUpdate("position", val === "" ? null : parseInt(val, 10));
+  }
+
+  function onRunnerUpPositionSelect(e) {
+    const val = e.target.value;
+    dispatchRunnerUpUpdate("position", val === "" ? null : parseInt(val, 10));
   }
 
   function toggleRunnerUp(e) {
@@ -84,19 +82,18 @@
       value={group.winner.name}
       on:input={(e) => dispatchWinnerUpdate("name", e.target.value)}
     />
-    <select
-      class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-red-500"
-      bind:value={localWinnerPos}
-      on:change={() => {
-        const pos = localWinnerPos === '' ? null : parseInt(localWinnerPos, 10);
-        dispatchWinnerUpdate('position', pos);
-      }}
-    >
-      <option value="">Position</option>
-      {#each winnerSelectOptions as pos}
-        <option value={pos}>{pos}</option>
-      {/each}
-    </select>
+    {#key availableWinnerPositions.join(",")}
+      <select
+        class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-red-500"
+        value={group.winner.position ?? ""}
+        on:change={onWinnerPositionSelect}
+      >
+        <option value="">Position</option>
+        {#each winnerSelectOptions as pos}
+          <option value={pos}>{pos}</option>
+        {/each}
+      </select>
+    {/key}
   </div>
 
   <!-- Runner-up checkbox -->
@@ -129,20 +126,19 @@
         value={group.runnerUp.name}
         on:input={(e) => dispatchRunnerUpUpdate("name", e.target.value)}
       />
-      <select
-        class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-red-500"
-        bind:value={localRunnerUpPos}
-        on:change={() => {
-          const pos = localRunnerUpPos === '' ? null : parseInt(localRunnerUpPos, 10);
-          dispatchRunnerUpUpdate('position', pos);
-        }}
-        disabled={group.winner.position === null}
-      >
-        <option value="">{group.winner.position === null ? 'Place winner first' : 'Position'}</option>
-        {#each runnerUpSelectOptions as pos}
-          <option value={pos}>{pos}</option>
-        {/each}
-      </select>
+      {#key availableRunnerUpPositions.join(",")}
+        <select
+          class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-red-500"
+          value={group.runnerUp.position ?? ""}
+          on:change={onRunnerUpPositionSelect}
+          disabled={group.winner.position === null}
+        >
+          <option value="">{group.winner.position === null ? 'Place winner first' : 'Position'}</option>
+          {#each runnerUpSelectOptions as pos}
+            <option value={pos}>{pos}</option>
+          {/each}
+        </select>
+      {/key}
     </div>
   {/if}
 </div>
