@@ -252,7 +252,7 @@
   });
 </script>
 
-<div class="container mx-auto pt-3 px-3 flex flex-col min-h-[calc(100vh-3rem)]">
+<div class="container mx-auto pt-3 px-3 flex flex-col h-[calc(100vh-3rem)]">
   {#if !confirmed}
     <div class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-white">
       <h2 class="text-lg font-medium mb-4">Draw Preparation Setup</h2>
@@ -285,7 +285,7 @@
         {/each}
       </div>
     {/if}
-    <div class="flex flex-col md:flex-row gap-4 flex-1">
+    <div class="flex flex-col md:flex-row gap-4 flex-1 min-h-0">
       <!-- Left panel: Groups form -->
       <div class="md:w-1/2 overflow-y-auto min-h-0">
         <div class="rounded-lg mx-2 p-4 elevation-3 bg-white">
