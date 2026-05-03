@@ -98,9 +98,9 @@
         numGroups: num,
         groups: makeEmptyGroups(num),
         round: data.rounds,
-        baseWinnerPositions: data.winners,
-        baseRunnerUpPositions: data.runnerups,
-        baseByePositions: data.byes,
+        baseWinnerPositions: [...data.winners].sort((a, b) => a - b),
+        baseRunnerUpPositions: [...data.runnerups].sort((a, b) => a - b),
+        baseByePositions: [...data.byes].sort((a, b) => a - b),
       };
       confirmed = true;
     } catch (e) {
@@ -175,9 +175,9 @@
         numGroups: data.numGroups,
         groups: data.groups,
         round: drawData.rounds,
-        baseWinnerPositions: drawData.winners,
-        baseRunnerUpPositions: drawData.runnerups,
-        baseByePositions: drawData.byes,
+        baseWinnerPositions: [...drawData.winners].sort((a, b) => a - b),
+        baseRunnerUpPositions: [...drawData.runnerups].sort((a, b) => a - b),
+        baseByePositions: [...drawData.byes].sort((a, b) => a - b),
       };
       confirmed = true;
       error = '';
@@ -239,9 +239,9 @@
         state = {
           ...recent,
           round: drawData.rounds,
-          baseWinnerPositions: drawData.winners,
-          baseRunnerUpPositions: drawData.runnerups,
-          baseByePositions: drawData.byes,
+          baseWinnerPositions: [...drawData.winners].sort((a, b) => a - b),
+          baseRunnerUpPositions: [...drawData.runnerups].sort((a, b) => a - b),
+          baseByePositions: [...drawData.byes].sort((a, b) => a - b),
         };
         confirmed = true;
       } catch (e) {
