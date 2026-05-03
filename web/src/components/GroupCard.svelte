@@ -88,7 +88,7 @@
         value={group.winner.position ?? ""}
         on:change={onWinnerPositionSelect}
       >
-        <option value="">Position</option>
+        {#if group.winner.position === null}<option value="">Position</option>{/if}
         {#each winnerSelectOptions as pos}
           <option value={pos}>{pos}</option>
         {/each}
@@ -133,7 +133,7 @@
           on:change={onRunnerUpPositionSelect}
           disabled={group.winner.position === null}
         >
-          <option value="">{group.winner.position === null ? 'Place winner first' : 'Position'}</option>
+          {#if group.runnerUp.position === null}<option value="">Position</option>{/if}
           {#each runnerUpSelectOptions as pos}
             <option value={pos}>{pos}</option>
           {/each}
