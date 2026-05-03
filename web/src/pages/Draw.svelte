@@ -39,6 +39,10 @@
   function numberOrder(a, b) {
     return a - b;
   }
+  function winnerSeedLabel(n) {
+    if (n <= 2) return String(n);
+    return '=' + (Math.pow(2, Math.floor(Math.log2(n - 1))) + 1);
+  }
   let calculatePromise;
   function calculate() {
     players = [];
@@ -56,11 +60,11 @@
         byesPositions.push(pos);
       });
       data.winners.forEach((pos, i) => {
-        players[pos - 1] = `${pos}: Winner: ${i + 1}`;
+        players[pos - 1] = `${pos}: Winner: ${winnerSeedLabel(i + 1)}`;
         winnersPositions.push(pos);
       });
       data.runnerups.forEach((pos, i) => {
-        players[pos - 1] = `${pos}: Runner-up: ${i + 1}`;
+        players[pos - 1] = `${pos}: Runner-up`;
         runnerUpsPositions.push(pos);
       });
       players = players;
