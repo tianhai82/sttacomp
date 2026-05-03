@@ -30,7 +30,8 @@
     ? state.groups.map(group => {
         if (group.winner.position === null) return [];
         return getAvailablePositions(activePositions.runnerups, occupiedPositions)
-          .filter(pos => isInOppositeHalf(pos, group.winner.position, state.round));
+          .filter(pos => isInOppositeHalf(pos, group.winner.position, state.round))
+          .sort((a, b) => a - b);
       })
     : [];
 
@@ -99,7 +100,7 @@
         groups: makeEmptyGroups(num),
         round: data.rounds,
         baseWinnerPositions: [...data.winners].sort((a, b) => a - b),
-        baseRunnerUpPositions: [...data.runnerups].sort((a, b) => a - b),
+        baseRunnerUpPositions: [...data.runnerups],
         baseByePositions: [...data.byes].sort((a, b) => a - b),
       };
       confirmed = true;
@@ -176,7 +177,7 @@
         groups: data.groups,
         round: drawData.rounds,
         baseWinnerPositions: [...drawData.winners].sort((a, b) => a - b),
-        baseRunnerUpPositions: [...drawData.runnerups].sort((a, b) => a - b),
+        baseRunnerUpPositions: [...drawData.runnerups],
         baseByePositions: [...drawData.byes].sort((a, b) => a - b),
       };
       confirmed = true;
@@ -240,7 +241,7 @@
           ...recent,
           round: drawData.rounds,
           baseWinnerPositions: [...drawData.winners].sort((a, b) => a - b),
-          baseRunnerUpPositions: [...drawData.runnerups].sort((a, b) => a - b),
+          baseRunnerUpPositions: [...drawData.runnerups],
           baseByePositions: [...drawData.byes].sort((a, b) => a - b),
         };
         confirmed = true;

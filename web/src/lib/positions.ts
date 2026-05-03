@@ -31,8 +31,7 @@ export function deriveActivePositions(state: DrawPrepState): ActivePositions {
 
     if (candidates.length === 0) continue;
 
-    // Sort candidates numerically ascending, remove the highest-indexed (largest number)
-    candidates.sort((a, b) => a - b);
+    // Remove the highest-index candidate (last in original API order)
     const toRemove = candidates[candidates.length - 1];
     removed.add(toRemove);
     byes.push(toRemove);
