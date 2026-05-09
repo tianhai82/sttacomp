@@ -306,10 +306,10 @@
         />
       </div>
       <div class="flex items-center gap-3">
-        <Btn cls="bg-red-500 text-white" on:click={confirmGroups}>
+        <Btn cls="bg-red-500 text-white" onclick={confirmGroups}>
           Confirm
         </Btn>
-        <Btn cls="bg-gray-500 text-white" on:click={() => fileInput.click()}>
+        <Btn cls="bg-gray-500 text-white" onclick={() => fileInput.click()}>>
           Import
         </Btn>
         <input bind:this={fileInput} type="file" accept=".json" class="hidden" on:change={onSetupFileSelected} />

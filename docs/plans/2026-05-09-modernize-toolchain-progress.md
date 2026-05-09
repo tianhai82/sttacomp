@@ -10,9 +10,9 @@ Last updated: 2026-05-09T00:00:00Z
 | 1 | ✅ done | Verify baseline | 419cf57 |
 | 2 | ✅ done | Replace elevation classes with shadow utilities | 8ddf913 |
 | 3 | ✅ done | Full toolchain upgrade (Svelte 5 + Vite 6 + Tailwind 4) ⏸ CHECKPOINT: done | ab772d1 |
-| 4 | 🔄 in-progress | Fonts cleanup | — |
+| 4 | ✅ done | Fonts cleanup | 697ad79 |
 | 5 | ✅ done | Remove svetamat — create Btn.svelte and replace all usages ⏸ CHECKPOINT: done | ab772d1 |
-| 6 | ⬜ pending | Migrate App.svelte, Logo.svelte, and Btn.svelte to runes | — |
+| 6 | 🔄 in-progress | Migrate App.svelte, Logo.svelte, and Btn.svelte to runes | — |
 | 7 | ⬜ pending | Migrate SplitDraw.svelte and DrawPrepChart.svelte to runes | — |
 | 8 | ⬜ pending | Migrate GroupCard.svelte and DrawPrepGroups.svelte to runes ⏸ CHECKPOINT: test | — |
 | 9 | ⬜ pending | Migrate Draw.svelte to runes ⏸ CHECKPOINT: done | — |

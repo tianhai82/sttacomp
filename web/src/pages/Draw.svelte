@@ -105,7 +105,7 @@
     </div>
   </div>
   <div class="flex justify-end mr-2 mt-2">
-    <Btn cls="bg-red-500 text-white" on:click={calculate}>Calculate</Btn>
+    <Btn cls="bg-red-500 text-white" onclick={calculate}>Calculate</Btn>
   </div>
   {#await calculatePromise}
     <div
