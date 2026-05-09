@@ -3,13 +3,7 @@
   import Draw from "./pages/Draw.svelte";
   import DrawPrep from "./pages/DrawPrep.svelte";
 
-  const pages = {
-    draw: Draw,
-    drawPrep: DrawPrep,
-  };
-
   let selectedPage = $state("draw");
-  let component = $derived(pages[selectedPage]);
 </script>
 
 <div
@@ -38,4 +32,8 @@
     </button>
   </div>
 </div>
-<svelte:component this={component} />
+{#if selectedPage === 'draw'}
+  <Draw />
+{:else}
+  <DrawPrep />
+{/if}

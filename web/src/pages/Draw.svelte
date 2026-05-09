@@ -3,31 +3,24 @@
   import { calculateDraws } from "../lib/calculateDraw";
   import SplitDraw from "../components/SplitDraw.svelte";
 
-  let winners = 20;
-  let runnerups = 20;
-  let round = 0;
-  let players = [];
-  let winnersPositions = [];
-  let sorted = false;
-  let sortedWinnersPosition = [];
-  let winnersPositionDisplay = [];
-  let runnerUpsPositions = [];
-  let byesPositions = [];
-  $: {
-    sortedWinnersPosition = [...winnersPositions];
-    sortedWinnersPosition.sort(numberOrder);
-  }
-  $: if (sorted) {
-    winnersPositionDisplay = sortedWinnersPosition;
-  } else {
-    winnersPositionDisplay = winnersPositions;
-  }
-  let winnersGrpsOf4;
-  let runnerUpsGrpsOf4;
-  let byesGrpsOf4;
-  $: winnersGrpsOf4 = groupInto4s(winnersPositionDisplay);
-  $: runnerUpsGrpsOf4 = groupInto4s(runnerUpsPositions);
-  $: byesGrpsOf4 = groupInto4s(byesPositions);
+  let winners = $state(20);
+  let runnerups = $state(20);
+  let round = $state(0);
+  let players = $state([]);
+  let winnersPositions = $state([]);
+  let sorted = $state(false);
+  let sortedWinnersPosition = $derived.by(() => {
+    const arr = [...winnersPositions];
+    arr.sort(numberOrder);
+    return arr;
+  });
+  let winnersPositionDisplay = $derived(sorted ? sortedWinnersPosition : winnersPositions);
+  let runnerUpsPositions = $state([]);
+  let byesPositions = $state([]);
+
+  let winnersGrpsOf4 = $derived(groupInto4s(winnersPositionDisplay));
+  let runnerUpsGrpsOf4 = $derived(groupInto4s(runnerUpsPositions));
+  let byesGrpsOf4 = $derived(groupInto4s(byesPositions));
 
   function groupInto4s(array) {
     let grpsOf4 = [];
@@ -43,7 +36,7 @@
     if (n <= 2) return String(n);
     return "=" + (Math.pow(2, Math.floor(Math.log2(n - 1))) + 1);
   }
-  let calculatePromise;
+  let calculatePromise = $state();
   function calculate() {
     players = [];
     winnersPositions = [];
@@ -87,7 +80,7 @@
           type="number"
           class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-red-500"
           bind:value={winners}
-          on:keyup={calculate}
+          onkeyup={calculate}
         />
       </div>
     </div>
@@ -99,7 +92,7 @@
           type="number"
           class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-red-500"
           bind:value={runnerups}
-          on:keyup={calculate}
+          onkeyup={calculate}
         />
       </div>
     </div>

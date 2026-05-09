@@ -14,8 +14,8 @@ Last updated: 2026-05-09T00:00:00Z
 | 5 | ✅ done | Remove svetamat — create Btn.svelte and replace all usages ⏸ CHECKPOINT: done | ab772d1 |
 | 6 | ✅ done | Migrate App.svelte, Logo.svelte, and Btn.svelte to runes | 74ec4b4 |
 | 7 | ✅ done | Migrate SplitDraw.svelte and DrawPrepChart.svelte to runes | 8324778 |
-| 8 | 🔄 in-progress | Migrate GroupCard.svelte and DrawPrepGroups.svelte to runes ⏸ CHECKPOINT: test | — |
-| 9 | ⬜ pending | Migrate Draw.svelte to runes ⏸ CHECKPOINT: done | — |
+| 8 | ✅ done | Migrate GroupCard.svelte and DrawPrepGroups.svelte to runes ⏸ CHECKPOINT: test | 9f013ae |
+| 9 | ⏸ done-review | Migrate Draw.svelte to runes ⏸ CHECKPOINT: done | — |
 | 10 | ⬜ pending | Migrate DrawPrep.svelte to runes ⏸ CHECKPOINT: done | — |
 | 11 | ⬜ pending | Set up component testing infrastructure + add tests (Part 1) | — |
 | 12 | ⬜ pending | Add component tests (Part 2) | — |
