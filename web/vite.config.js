@@ -4,7 +4,10 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [svelte(), tailwindcss()],
+  resolve: {
+    conditions: ['browser'],
+  },
   test: {
-    environment: 'jsdom',
+    environment: 'happy-dom',
   },
 });

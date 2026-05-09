@@ -7,5 +7,5 @@
   {disabled}
   {onclick}
 >
-  {@render children()}
+  {@render children?.()}
 </button>
