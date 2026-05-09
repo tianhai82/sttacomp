@@ -282,25 +282,30 @@
   {#if !confirmed}
     <div class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-white">
       <h2 class="text-lg font-medium mb-4">Draw Preparation Setup</h2>
-      <div class="flex items-center gap-4 mb-4 flex-wrap">
+      <div class="mb-3">
+        <label class="block text-gray-700 font-medium mb-1" for="eventName">Event name</label>
         <input
           id="eventName"
           type="text"
-          placeholder="Event name (optional)"
-          class="border border-gray-300 rounded px-3 py-1 flex-1 min-w-[150px] focus:outline-none focus:border-red-500"
+          placeholder="e.g. U13 Boys Singles"
+          class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-red-500"
           bind:value={eventNameInput}
           on:keydown={(e) => e.key === 'Enter' && confirmGroups()}
         />
-        <label class="text-gray-700 font-medium" for="numGroups">Number of groups:</label>
+      </div>
+      <div class="mb-3">
+        <label class="block text-gray-700 font-medium mb-1" for="numGroups">Number of groups</label>
         <input
           id="numGroups"
           type="number"
           min="1"
           max="128"
-          class="border border-gray-300 rounded px-3 py-1 w-24 focus:outline-none focus:border-red-500"
+          class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-red-500"
           bind:value={numGroupsInput}
           on:keydown={(e) => e.key === 'Enter' && confirmGroups()}
         />
+      </div>
+      <div class="flex items-center gap-3">
         <Button bgColor="bg-red-500" textColor="text-white" on:click={confirmGroups}>
           Confirm
         </Button>
