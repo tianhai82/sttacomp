@@ -1,9 +1,8 @@
 <script>
-  export let round = 1;
-  export let players = [];
+  let { round = 1, players = [] } = $props();
 
-  $: columnCount = round <= 64 ? 2 : 4;
-  $: positionsPerColumn = round / columnCount;
+  let columnCount = $derived(round <= 64 ? 2 : 4);
+  let positionsPerColumn = $derived(round / columnCount);
 
   function extractLabel(raw, pos) {
     if (!raw || raw == pos) return String(pos);
@@ -63,8 +62,10 @@
     return { label, quarters: [[groups]] };
   }
 
-  $: columns = Array.from({ length: columnCount }, (_, c) =>
-    buildColumn(c, positionsPerColumn, columnCount, players)
+  let columns = $derived(
+    Array.from({ length: columnCount }, (_, c) =>
+      buildColumn(c, positionsPerColumn, columnCount, players)
+    )
   );
 </script>
 
