@@ -29,6 +29,7 @@ function makeState(groups: Group[], round = 8): DrawPrepState {
     baseWinnerPositions: [1, 8, 4, 5],
     baseRunnerUpPositions: [3, 6],
     baseByePositions: [2, 7],
+    eventName: "",
   };
 }
 

@@ -21,4 +21,5 @@ export interface DrawPrepState {
   baseWinnerPositions: number[];
   baseRunnerUpPositions: number[];
   baseByePositions: number[];
+  eventName: string;
 }
