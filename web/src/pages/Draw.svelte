@@ -1,5 +1,5 @@
 <script>
-  import { Input, Button, Checkbox, Spinner } from "svetamat";
+  import Btn from "../components/Btn.svelte";
   import { calculateDraws } from "../lib/calculateDraw";
   import SplitDraw from "../components/SplitDraw.svelte";
 
@@ -80,34 +80,38 @@
 <div class="container mx-auto pt-3 px-3 flex flex-col">
   <div class="flex justify-around items-center">
     <div class="w-1/2 mx-2">
-      <Input
-        number
-        outlined
-        on:keyup={calculate}
-        label="Total no. of winners"
-        bind:value={winners}
-      />
+      <div>
+        <label class="block text-gray-700 text-sm mb-1" for="winners">Total no. of winners</label>
+        <input
+          id="winners"
+          type="number"
+          class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-red-500"
+          bind:value={winners}
+          on:keyup={calculate}
+        />
+      </div>
     </div>
     <div class="w-1/2 mx-2">
-      <Input
-        number
-        outlined
-        on:keyup={calculate}
-        label="Total no. of runner-ups"
-        bind:value={runnerups}
-      />
+      <div>
+        <label class="block text-gray-700 text-sm mb-1" for="runnerups">Total no. of runner-ups</label>
+        <input
+          id="runnerups"
+          type="number"
+          class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-red-500"
+          bind:value={runnerups}
+          on:keyup={calculate}
+        />
+      </div>
     </div>
   </div>
-  <div class="flex flex-row-reverse mr-2 -mt-3">
-    <Button bgColor="bg-red-500" textColor="text-white" on:click={calculate}>
-      Calculate
-    </Button>
+  <div class="flex justify-end mr-2 mt-2">
+    <Btn cls="bg-red-500 text-white" on:click={calculate}>Calculate</Btn>
   </div>
   {#await calculatePromise}
     <div
       class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-blue-100 flex items-center"
     >
-      <Spinner />
+      <div class="h-8 w-8 border-4 border-purple-200 border-t-purple-500 rounded-full animate-spin"></div>
       <div class="ml-4">Calculation in progress...</div>
     </div>
   {:then}
@@ -119,11 +123,10 @@
         >
           Winners' Positions
           <div class="ml-6">
-            <Checkbox
-              label="Ascending"
-              color="text-orange-600"
-              bind:checked={sorted}
-            />
+            <label class="flex items-center cursor-pointer text-orange-600">
+              <input type="checkbox" class="mr-1.5" bind:checked={sorted} />
+              <span>Ascending</span>
+            </label>
           </div>
         </h2>
         <div class="flex flex-wrap">

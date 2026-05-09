@@ -2,7 +2,7 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import GroupCard from "./GroupCard.svelte";
-  import { Button } from "svetamat";
+  import Btn from "./Btn.svelte";
   const dispatch = createEventDispatcher();
 
   export let groups = [];
@@ -53,14 +53,14 @@
 
   <!-- Action buttons -->
   <div class="flex gap-3 mt-4 px-1">
-    <Button bgColor="bg-blue-500" textColor="text-white" on:click={() => dispatch("export")}>
+    <Btn cls="bg-blue-500 text-white" on:click={() => dispatch("export")}>
       Export
-    </Button>
-    <Button bgColor="bg-gray-500" textColor="text-white" on:click={triggerImport}>
+    </Btn>
+    <Btn cls="bg-gray-500 text-white" on:click={triggerImport}>
       Import
-    </Button>
-    <Button bgColor="bg-red-700" textColor="text-white" on:click={() => dispatch("reset")}>
+    </Btn>
+    <Btn cls="bg-red-700 text-white" on:click={() => dispatch("reset")}>
       Reset
-    </Button>
+    </Btn>
   </div>
 </div>

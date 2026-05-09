@@ -1,6 +1,6 @@
 <!-- web/src/pages/DrawPrep.svelte -->
 <script>
-  import { Button } from "svetamat";
+  import Btn from "../components/Btn.svelte";
   import { calculateDraws } from "../lib/calculateDraw";
   import DrawPrepChart from "../components/DrawPrepChart.svelte";
   import DrawPrepGroups from "../components/DrawPrepGroups.svelte";
@@ -306,12 +306,12 @@
         />
       </div>
       <div class="flex items-center gap-3">
-        <Button bgColor="bg-red-500" textColor="text-white" on:click={confirmGroups}>
+        <Btn cls="bg-red-500 text-white" on:click={confirmGroups}>
           Confirm
-        </Button>
-        <Button bgColor="bg-gray-500" textColor="text-white" on:click={() => fileInput.click()}>
+        </Btn>
+        <Btn cls="bg-gray-500 text-white" on:click={() => fileInput.click()}>
           Import
-        </Button>
+        </Btn>
         <input bind:this={fileInput} type="file" accept=".json" class="hidden" on:change={onSetupFileSelected} />
       </div>
       {#if error}

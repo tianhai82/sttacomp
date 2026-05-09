@@ -7,9 +7,9 @@ Last updated: 2026-05-09T00:00:00Z
 
 | # | Status | Task | Commit |
 |---|--------|------|--------|
-| 1 | ⬜ pending | Verify baseline | — |
-| 2 | ⬜ pending | Replace elevation classes with shadow utilities | — |
-| 3 | ⬜ pending | Full toolchain upgrade (Svelte 5 + Vite 6 + Tailwind 4) ⏸ CHECKPOINT: done | — |
+| 1 | ✅ done | Verify baseline | 419cf57 |
+| 2 | ✅ done | Replace elevation classes with shadow utilities | 8ddf913 |
+| 3 | ⏸ done-review | Full toolchain upgrade (Svelte 5 + Vite 6 + Tailwind 4) ⏸ CHECKPOINT: done | — |
 | 4 | ⬜ pending | Fonts cleanup | — |
 | 5 | ⬜ pending | Remove svetamat — create Btn.svelte and replace all usages ⏸ CHECKPOINT: done | — |
 | 6 | ⬜ pending | Migrate App.svelte, Logo.svelte, and Btn.svelte to runes | — |
