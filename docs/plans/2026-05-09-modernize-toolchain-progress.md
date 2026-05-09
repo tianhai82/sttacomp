@@ -17,6 +17,6 @@ Last updated: 2026-05-09T00:00:00Z
 | 8 | ✅ done | Migrate GroupCard.svelte and DrawPrepGroups.svelte to runes ⏸ CHECKPOINT: test | 9f013ae |
 | 9 | ✅ done | Migrate Draw.svelte to runes ⏸ CHECKPOINT: done | 91578b7 |
 | 10 | ✅ done | Migrate DrawPrep.svelte to runes ⏸ CHECKPOINT: done | 5e8772f |
-| 11 | 🔄 in-progress | Set up component testing infrastructure + add tests (Part 1) | — |
-| 12 | ⬜ pending | Add component tests (Part 2) | — |
+| 11 | ✅ done | Set up component testing infrastructure + add tests (Part 1) | b59e051 |
+| 12 | 🔄 in-progress | Add component tests (Part 2) | — |
 | 13 | ⬜ pending | Final cleanup — svelte-check, build verification | — |
