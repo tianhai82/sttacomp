@@ -114,8 +114,7 @@
     e.target.value = '';
   }
 
-  function handleGroupsChange(e) {
-    const newGroups = e.detail.groups;
+  function handleGroupsChange(newGroups) {
     let finalGroups = newGroups;
 
     // Cascade: check if any runner-up positions became invalid
@@ -339,10 +338,10 @@
             groups={state.groups}
             availableWinnerPositions={availableWinnerPositions}
             availableRunnerUpPositionsPerGroup={availableRunnerUpPositionsPerGroup}
-            on:change={handleGroupsChange}
-            on:export={exportDraw}
-            on:import={(e) => importDraw(e.detail.file)}
-            on:reset={resetDraw}
+            onChange={handleGroupsChange}
+            onExport={exportDraw}
+            onImport={importDraw}
+            onReset={resetDraw}
           />
         </div>
       </div>

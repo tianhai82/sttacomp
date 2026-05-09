@@ -1,25 +1,26 @@
-<!-- web/src/components/DrawPrepGroups.svelte -->
 <script>
-  import { createEventDispatcher } from "svelte";
-  import GroupCard from "./GroupCard.svelte";
   import Btn from "./Btn.svelte";
-  const dispatch = createEventDispatcher();
+  import GroupCard from "./GroupCard.svelte";
 
-  export let groups = [];
-  export let availableWinnerPositions = [];
-  export let availableRunnerUpPositionsPerGroup = [];
+  let {
+    groups = [],
+    availableWinnerPositions = [],
+    availableRunnerUpPositionsPerGroup = [],
+    onChange,
+    onExport,
+    onImport,
+    onReset,
+  } = $props();
 
-  function handleUpdate(e) {
-    const { groupIndex, field, value, extra } = e.detail;
+  function handleUpdate(data) {
+    const { groupIndex, field, value, extra } = data;
     const updated = [...groups];
     const patch = { [field]: value };
-    // When hasRunnerUp is toggled off, also clear runnerUp data
     if (field === 'hasRunnerUp' && value === false) {
       patch.runnerUp = null;
     }
     updated[groupIndex] = { ...updated[groupIndex], ...patch, ...extra };
-    groups = updated;
-    dispatch("change", { groups: updated });
+    onChange?.(updated);
   }
 
   let fileInput;
@@ -31,7 +32,7 @@
   function onFileSelected(e) {
     const file = e.target.files[0];
     if (file) {
-      dispatch("import", { file });
+      onImport?.(file);
     }
     e.target.value = '';
   }
@@ -44,23 +45,17 @@
       groupIndex={i + 1}
       {availableWinnerPositions}
       availableRunnerUpPositions={availableRunnerUpPositionsPerGroup[i] || []}
-      on:update={handleUpdate}
+      onUpdate={handleUpdate}
     />
   {/each}
 
   <!-- Hidden file input for import -->
-  <input bind:this={fileInput} type="file" accept=".json" class="hidden" on:change={onFileSelected} />
+  <input bind:this={fileInput} type="file" accept=".json" class="hidden" onchange={onFileSelected} />
 
   <!-- Action buttons -->
   <div class="flex gap-3 mt-4 px-1">
-    <Btn cls="bg-blue-500 text-white" onclick={() => dispatch("export")}>
-      Export
-    </Btn>
-    <Btn cls="bg-gray-500 text-white" onclick={triggerImport}>
-      Import
-    </Btn>
-    <Btn cls="bg-red-700 text-white" onclick={() => dispatch("reset")}>
-      Reset
-    </Btn>
+    <Btn cls="bg-blue-500 text-white" onclick={() => onExport?.()}>Export</Btn>
+    <Btn cls="bg-gray-500 text-white" onclick={triggerImport}>Import</Btn>
+    <Btn cls="bg-red-700 text-white" onclick={() => onReset?.()}>Reset</Btn>
   </div>
 </div>
