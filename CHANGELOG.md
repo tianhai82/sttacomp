@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-05-09 — Event name for Draw Prep
+
+- Optional event name field in Draw Prep setup
+- Event name shown in groups heading (e.g. "U13 Boys Singles — Groups (4)")
+- Export filename includes event name and timestamp (e.g. `draw-U13 Boys Singles-2026-05-09 14-30.json`)
+- Event name preserved on import and auto-restore
+- Improved setup form layout with consistent label-above fields
+
+
 ## 2025-05-05 — Mobile-responsive Draw Prep layout
 
 - Bottom tab bar navigation on mobile for DrawPrep page
