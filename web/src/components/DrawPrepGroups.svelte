@@ -13,9 +13,9 @@
   } = $props();
 
   function handleUpdate(data) {
-    const { groupIndex, field, value, extra } = data;
+    const { groupIndex, field, value, ...extra } = data;
     const updated = [...groups];
-    const patch = { [field]: value };
+    const patch = { [field]: value, ...extra };
     if (field === 'hasRunnerUp' && value === false) {
       patch.runnerUp = null;
     }
