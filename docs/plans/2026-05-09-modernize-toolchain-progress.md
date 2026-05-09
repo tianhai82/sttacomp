@@ -1,0 +1,22 @@
+# Progress: Modernize Toolchain
+
+Plan: docs/plans/2026-05-09-modernize-toolchain-implementation.md
+Branch: modernize-toolchain
+Started: 2026-05-09T00:00:00Z
+Last updated: 2026-05-09T00:00:00Z
+
+| # | Status | Task | Commit |
+|---|--------|------|--------|
+| 1 | ⬜ pending | Verify baseline | — |
+| 2 | ⬜ pending | Replace elevation classes with shadow utilities | — |
+| 3 | ⬜ pending | Full toolchain upgrade (Svelte 5 + Vite 6 + Tailwind 4) ⏸ CHECKPOINT: done | — |
+| 4 | ⬜ pending | Fonts cleanup | — |
+| 5 | ⬜ pending | Remove svetamat — create Btn.svelte and replace all usages ⏸ CHECKPOINT: done | — |
+| 6 | ⬜ pending | Migrate App.svelte, Logo.svelte, and Btn.svelte to runes | — |
+| 7 | ⬜ pending | Migrate SplitDraw.svelte and DrawPrepChart.svelte to runes | — |
+| 8 | ⬜ pending | Migrate GroupCard.svelte and DrawPrepGroups.svelte to runes ⏸ CHECKPOINT: test | — |
+| 9 | ⬜ pending | Migrate Draw.svelte to runes ⏸ CHECKPOINT: done | — |
+| 10 | ⬜ pending | Migrate DrawPrep.svelte to runes ⏸ CHECKPOINT: done | — |
+| 11 | ⬜ pending | Set up component testing infrastructure + add tests (Part 1) | — |
+| 12 | ⬜ pending | Add component tests (Part 2) | — |
+| 13 | ⬜ pending | Final cleanup — svelte-check, build verification | — |
