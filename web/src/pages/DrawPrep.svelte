@@ -6,9 +6,11 @@
   import DrawPrepGroups from "../components/DrawPrepGroups.svelte";
   import { getOccupiedPositions, getAvailablePositions, deriveActivePositions, isInOppositeHalf, clearInvalidRunnerUps } from "../lib/positions";
   import { save as storageSave, remove as storageRemove, loadAll, loadMostRecent } from "../lib/storage";
+  import { formatExportFilename } from "../lib/exportFilename";
   import { onMount, onDestroy } from "svelte";
 
   let numGroupsInput = "";
+  let eventNameInput = "";
   let fileInput;
   let confirmed = false;
   let error = "";
@@ -182,6 +184,7 @@
 
       if (!confirm('Importing will replace the current draw. Continue?')) return;
 
+      eventNameInput = data.eventName || "";
       state = buildState(data.groups.length, data.groups, drawData);
       confirmed = true;
       error = '';
@@ -194,6 +197,7 @@
   function exportDraw() {
     if (!state) return;
     const data = {
+      eventName: state.eventName || "",
       numGroups: state.groups.length,
       groups: state.groups,
     };
@@ -202,7 +206,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `draw-prep-${Date.now()}.json`;
+    a.download = formatExportFilename(state.eventName || "");
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -217,6 +221,7 @@
     state = null;
     confirmed = false;
     numGroupsInput = '';
+    eventNameInput = '';
     error = '';
     warnings = [];
   }
@@ -251,6 +256,7 @@
       createdAt: Date.now(),
       numGroups,
       groups,
+      eventName: eventNameInput.trim(),
       ...drawData,
     };
   }
@@ -264,6 +270,7 @@
     try {
       const drawData = await computeDrawData(recent.groups.length);
       state = { ...recent, ...drawData };
+      eventNameInput = recent.eventName || "";
       confirmed = true;
     } catch (e) {
       storageRemove(recent.id);
@@ -276,6 +283,14 @@
     <div class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-white">
       <h2 class="text-lg font-medium mb-4">Draw Preparation Setup</h2>
       <div class="flex items-center gap-4 mb-4 flex-wrap">
+        <input
+          id="eventName"
+          type="text"
+          placeholder="Event name (optional)"
+          class="border border-gray-300 rounded px-3 py-1 flex-1 min-w-[150px] focus:outline-none focus:border-red-500"
+          bind:value={eventNameInput}
+          on:keydown={(e) => e.key === 'Enter' && confirmGroups()}
+        />
         <label class="text-gray-700 font-medium" for="numGroups">Number of groups:</label>
         <input
           id="numGroups"
@@ -313,7 +328,7 @@
       <div class="md:w-1/2 overflow-y-auto min-h-0 {mobileTab === 'groups' ? '' : 'hidden md:block'}">
         <div class="rounded-lg mx-2 p-4 elevation-3 bg-white">
           <h2 class="text-lg font-medium mb-4">
-            Groups ({state.groups.length})
+            {state.eventName ? `${state.eventName} — ` : ''}Groups ({state.groups.length})
           </h2>
           <DrawPrepGroups
             groups={state.groups}
