@@ -1,6 +1,6 @@
 {
-  "name": "sveltamat-template",
-  "version": "1.0.0",
+  "name": "sttacomp",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,7 +15,6 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/svelte": "^5.3.1",
     "happy-dom": "^20.9.0",
-    "jsdom": "^29.1.1",
     "svelte": "^5.55.5",
     "svelte-check": "^4.4.8",
     "tailwindcss": "^4.3.0",
