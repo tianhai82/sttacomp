@@ -19,4 +19,4 @@ Last updated: 2026-05-09T00:00:00Z
 | 10 | ✅ done | Migrate DrawPrep.svelte to runes ⏸ CHECKPOINT: done | 5e8772f |
 | 11 | ✅ done | Set up component testing infrastructure + add tests (Part 1) | b59e051 |
 | 12 | ✅ done | Add component tests (Part 2) | c806938 |
-| 13 | 🔄 in-progress | Final cleanup — svelte-check, build verification | — |
+| 13 | ✅ done | Final cleanup — svelte-check, build verification | 40789ee |
