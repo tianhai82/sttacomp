@@ -19,7 +19,7 @@
     if (field === 'hasRunnerUp' && value === false) {
       patch.runnerUp = null;
     }
-    updated[groupIndex] = { ...updated[groupIndex], ...patch, ...extra };
+    updated[groupIndex] = { ...updated[groupIndex], ...patch };
     onChange?.(updated);
   }
 
