@@ -105,14 +105,14 @@
   </div>
   {#await calculatePromise}
     <div
-      class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-blue-100 flex items-center"
+      class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-blue-100 flex items-center"
     >
       <Spinner />
       <div class="ml-4">Calculation in progress...</div>
     </div>
   {:then}
     {#if players.length > 0}
-      <div class="rounded-lg mt-4 mx-2 py-4 px-4 elevation-3 bg-green-100">
+      <div class="rounded-lg mt-4 mx-2 py-4 px-4 shadow-md bg-green-100">
         <h2
           class="sm:text-lg text-base font-medium mr-2 flex items-center
           justify-between"
@@ -137,7 +137,7 @@
         </div>
       </div>
       {#if runnerUpsGrpsOf4.length > 0}
-        <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3 bg-orange-100">
+        <div class="rounded-lg mt-2 mx-2 py-4 px-4 shadow-md bg-orange-100">
           <h2 class="sm:text-lg text-base font-medium mb-2">
             Runner-Ups' Positions
           </h2>
@@ -152,7 +152,7 @@
           </div>
         </div>
       {/if}
-      <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3 bg-gray-200">
+      <div class="rounded-lg mt-2 mx-2 py-4 px-4 shadow-md bg-gray-200">
         <h2 class="sm:text-lg text-base font-medium mb-2">Byes' Positions</h2>
         <div class="flex flex-wrap">
           {#each byesGrpsOf4 as grp, i}
@@ -170,7 +170,7 @@
     {/if}
   {:catch e}
     <div
-      class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-red-100 flex items-center"
+      class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-red-100 flex items-center"
     >
       <span class="material-icons text-red-500">error</span>
       <div class="ml-4">{e.message}</div>

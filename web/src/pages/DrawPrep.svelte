@@ -280,7 +280,7 @@
 
 <div class="container mx-auto pt-3 px-3 flex flex-col h-[calc(100vh-3rem)] pb-14 md:pb-0">
   {#if !confirmed}
-    <div class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-white">
+    <div class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-white">
       <h2 class="text-lg font-medium mb-4">Draw Preparation Setup</h2>
       <div class="mb-3">
         <label class="block text-gray-700 font-medium mb-1" for="eventName">Event name</label>
@@ -331,7 +331,7 @@
     <div class="flex flex-col md:flex-row gap-4 flex-1 min-h-0">
       <!-- Left panel: Groups form -->
       <div class="md:w-1/2 overflow-y-auto min-h-0 {mobileTab === 'groups' ? '' : 'hidden md:block'}">
-        <div class="rounded-lg mx-2 p-4 elevation-3 bg-white">
+        <div class="rounded-lg mx-2 p-4 shadow-md bg-white">
           <h2 class="text-lg font-medium mb-4">
             {state.eventName ? `${state.eventName} — ` : ''}Groups ({state.groups.length})
           </h2>

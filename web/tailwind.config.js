@@ -17,7 +17,5 @@ export default {
   variants: {
     boxShadow: ['responsive', 'hover', 'focus', 'active'],
   },
-  plugins: [
-    require('tailwindcss-elevation')(['responsive', 'hover', 'active']),
-  ]
+  plugins: []
 }

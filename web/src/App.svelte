@@ -14,7 +14,7 @@
 
 
 <div
-  class="h-12 elevation-4 bg-red-600 flex justify-between items-center pl-4 md:pl-6 pr-3">
+  class="h-12 shadow-lg bg-red-600 flex justify-between items-center pl-4 md:pl-6 pr-3">
   <h1 class="text-white font-bold text-lg flex items-center">
     <Logo />
     <span class="hidden sm:inline">Table Tennis Draw Helper</span>
