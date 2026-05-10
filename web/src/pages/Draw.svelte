@@ -1,33 +1,26 @@
 <script>
-  import { Input, Button, Checkbox, Spinner } from "svetamat";
+  import Btn from "../components/Btn.svelte";
   import { calculateDraws } from "../lib/calculateDraw";
   import SplitDraw from "../components/SplitDraw.svelte";
 
-  let winners = 20;
-  let runnerups = 20;
-  let round = 0;
-  let players = [];
-  let winnersPositions = [];
-  let sorted = false;
-  let sortedWinnersPosition = [];
-  let winnersPositionDisplay = [];
-  let runnerUpsPositions = [];
-  let byesPositions = [];
-  $: {
-    sortedWinnersPosition = [...winnersPositions];
-    sortedWinnersPosition.sort(numberOrder);
-  }
-  $: if (sorted) {
-    winnersPositionDisplay = sortedWinnersPosition;
-  } else {
-    winnersPositionDisplay = winnersPositions;
-  }
-  let winnersGrpsOf4;
-  let runnerUpsGrpsOf4;
-  let byesGrpsOf4;
-  $: winnersGrpsOf4 = groupInto4s(winnersPositionDisplay);
-  $: runnerUpsGrpsOf4 = groupInto4s(runnerUpsPositions);
-  $: byesGrpsOf4 = groupInto4s(byesPositions);
+  let winners = $state(20);
+  let runnerups = $state(20);
+  let round = $state(0);
+  let players = $state([]);
+  let winnersPositions = $state([]);
+  let sorted = $state(false);
+  let sortedWinnersPosition = $derived.by(() => {
+    const arr = [...winnersPositions];
+    arr.sort(numberOrder);
+    return arr;
+  });
+  let winnersPositionDisplay = $derived(sorted ? sortedWinnersPosition : winnersPositions);
+  let runnerUpsPositions = $state([]);
+  let byesPositions = $state([]);
+
+  let winnersGrpsOf4 = $derived(groupInto4s(winnersPositionDisplay));
+  let runnerUpsGrpsOf4 = $derived(groupInto4s(runnerUpsPositions));
+  let byesGrpsOf4 = $derived(groupInto4s(byesPositions));
 
   function groupInto4s(array) {
     let grpsOf4 = [];
@@ -43,7 +36,7 @@
     if (n <= 2) return String(n);
     return "=" + (Math.pow(2, Math.floor(Math.log2(n - 1))) + 1);
   }
-  let calculatePromise;
+  let calculatePromise = $state();
   function calculate() {
     players = [];
     winnersPositions = [];
@@ -80,50 +73,53 @@
 <div class="container mx-auto pt-3 px-3 flex flex-col">
   <div class="flex justify-around items-center">
     <div class="w-1/2 mx-2">
-      <Input
-        number
-        outlined
-        on:keyup={calculate}
-        label="Total no. of winners"
-        bind:value={winners}
-      />
+      <div>
+        <label class="block text-gray-700 text-sm mb-1" for="winners">Total no. of winners</label>
+        <input
+          id="winners"
+          type="number"
+          class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-red-500"
+          bind:value={winners}
+          onkeyup={calculate}
+        />
+      </div>
     </div>
     <div class="w-1/2 mx-2">
-      <Input
-        number
-        outlined
-        on:keyup={calculate}
-        label="Total no. of runner-ups"
-        bind:value={runnerups}
-      />
+      <div>
+        <label class="block text-gray-700 text-sm mb-1" for="runnerups">Total no. of runner-ups</label>
+        <input
+          id="runnerups"
+          type="number"
+          class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-red-500"
+          bind:value={runnerups}
+          onkeyup={calculate}
+        />
+      </div>
     </div>
   </div>
-  <div class="flex flex-row-reverse mr-2 -mt-3">
-    <Button bgColor="bg-red-500" textColor="text-white" on:click={calculate}>
-      Calculate
-    </Button>
+  <div class="flex justify-end mr-2 mt-2">
+    <Btn cls="bg-red-500 text-white" onclick={calculate}>Calculate</Btn>
   </div>
   {#await calculatePromise}
     <div
-      class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-blue-100 flex items-center"
+      class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-blue-100 flex items-center"
     >
-      <Spinner />
+      <div class="h-8 w-8 border-4 border-purple-200 border-t-purple-500 rounded-full animate-spin"></div>
       <div class="ml-4">Calculation in progress...</div>
     </div>
   {:then}
     {#if players.length > 0}
-      <div class="rounded-lg mt-4 mx-2 py-4 px-4 elevation-3 bg-green-100">
+      <div class="rounded-lg mt-4 mx-2 py-4 px-4 shadow-md bg-green-100">
         <h2
           class="sm:text-lg text-base font-medium mr-2 flex items-center
           justify-between"
         >
           Winners' Positions
           <div class="ml-6">
-            <Checkbox
-              label="Ascending"
-              color="text-orange-600"
-              bind:checked={sorted}
-            />
+            <label class="flex items-center cursor-pointer text-orange-600">
+              <input type="checkbox" class="mr-1.5" bind:checked={sorted} />
+              <span>Ascending</span>
+            </label>
           </div>
         </h2>
         <div class="flex flex-wrap">
@@ -137,7 +133,7 @@
         </div>
       </div>
       {#if runnerUpsGrpsOf4.length > 0}
-        <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3 bg-orange-100">
+        <div class="rounded-lg mt-2 mx-2 py-4 px-4 shadow-md bg-orange-100">
           <h2 class="sm:text-lg text-base font-medium mb-2">
             Runner-Ups' Positions
           </h2>
@@ -152,7 +148,7 @@
           </div>
         </div>
       {/if}
-      <div class="rounded-lg mt-2 mx-2 py-4 px-4 elevation-3 bg-gray-200">
+      <div class="rounded-lg mt-2 mx-2 py-4 px-4 shadow-md bg-gray-200">
         <h2 class="sm:text-lg text-base font-medium mb-2">Byes' Positions</h2>
         <div class="flex flex-wrap">
           {#each byesGrpsOf4 as grp, i}
@@ -170,7 +166,7 @@
     {/if}
   {:catch e}
     <div
-      class="rounded-lg mt-4 mx-2 p-4 elevation-3 bg-red-100 flex items-center"
+      class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-red-100 flex items-center"
     >
       <span class="material-icons text-red-500">error</span>
       <div class="ml-4">{e.message}</div>

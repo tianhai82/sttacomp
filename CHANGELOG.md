@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-05-09 — Modernize toolchain
+
+- Upgraded to Svelte 5 (runes), Vite 6, Tailwind CSS 4
+- Removed svetamat dependency — replaced with lightweight Btn.svelte + plain HTML
+- Migrated all components to Svelte 5 runes ($props, $state, $derived, $effect)
+- Replaced self-hosted fonts with Google Fonts CDN
+- Replaced elevation classes with Tailwind shadow utilities
+- Added component tests with @testing-library/svelte (71 tests total)
+- Added svelte-check for type checking
+- Clean build with zero errors
+
 ## 2026-05-09 — Event name for Draw Prep
 
 - Optional event name field in Draw Prep setup

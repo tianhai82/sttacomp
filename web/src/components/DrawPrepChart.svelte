@@ -1,33 +1,36 @@
 <!-- web/src/components/DrawPrepChart.svelte -->
 <script>
-  export let round = 1;
-  export let winners = [];
-  export let runnerups = [];
-  export let byes = [];
-  export let placedPlayers = new Map(); // position -> {name, na, type}
+  let {
+    round = 1,
+    winners = [],
+    runnerups = [],
+    byes = [],
+    placedPlayers = new Map(),
+  } = $props();
 
-  $: columnCount = round <= 64 ? 2 : 4;
-  $: positionsPerColumn = round / columnCount;
+  let columnCount = $derived(round <= 64 ? 2 : 4);
+  let positionsPerColumn = $derived(round / columnCount);
 
-  // Build the full players array for SplitDraw-like rendering
-  $: allPositions = Array.from({ length: round }, (_, i) => i + 1);
+  let allPositions = $derived(Array.from({ length: round }, (_, i) => i + 1));
 
-  $: players = allPositions.map(pos => {
-    const placed = placedPlayers.get(pos);
-    if (placed) {
-      return `${pos}: ${placed.label || placed.name}`;
-    }
-    if (byes.includes(pos)) {
-      return `${pos}: BYE`;
-    }
-    if (winners.includes(pos)) {
-      return `${pos}: Winner`;
-    }
-    if (runnerups.includes(pos)) {
-      return `${pos}: Runner-up`;
-    }
-    return String(pos);
-  });
+  let players = $derived(
+    allPositions.map(pos => {
+      const placed = placedPlayers.get(pos);
+      if (placed) {
+        return `${pos}: ${placed.label || placed.name}`;
+      }
+      if (byes.includes(pos)) {
+        return `${pos}: BYE`;
+      }
+      if (winners.includes(pos)) {
+        return `${pos}: Winner`;
+      }
+      if (runnerups.includes(pos)) {
+        return `${pos}: Runner-up`;
+      }
+      return String(pos);
+    })
+  );
 
   function extractLabel(raw, pos) {
     if (!raw || raw == pos) return String(pos);
@@ -89,22 +92,28 @@
     return { label, quarters: [[groups]] };
   }
 
-  $: columns = Array.from({ length: columnCount }, (_, c) =>
-    buildColumn(c, positionsPerColumn, columnCount, players)
+  let columns = $derived(
+    Array.from({ length: columnCount }, (_, c) =>
+      buildColumn(c, positionsPerColumn, columnCount, players)
+    )
   );
 
   // Group columns into halves for desktop layout
-  $: halves = columnCount === 4
-    ? [
-        { label: 'TOP HALF', columns: [columns[0], columns[1]] },
-        { label: 'BOTTOM HALF', columns: [columns[2], columns[3]] },
-      ]
-    : columns.map(c => ({ label: c.label, columns: [c] }));
+  let halves = $derived(
+    columnCount === 4
+      ? [
+          { label: 'TOP HALF', columns: [columns[0], columns[1]] },
+          { label: 'BOTTOM HALF', columns: [columns[2], columns[3]] },
+        ]
+      : columns.map(c => ({ label: c.label, columns: [c] }))
+  );
 
-  let activeColumn = 0;
+  let activeColumn = $state(0);
 
   // Reset active column when columns change
-  $: if (activeColumn >= columnCount) activeColumn = 0;
+  $effect(() => {
+    if (activeColumn >= columnCount) activeColumn = 0;
+  });
 </script>
 
 <!-- Mobile: sub-tab row -->
@@ -115,7 +124,7 @@
         class="flex-1 py-2 text-xs font-medium text-center {activeColumn === i
           ? 'text-red-600 border-b-2 border-red-600'
           : 'text-gray-500'}"
-        on:click={() => (activeColumn = i)}>
+        onclick={() => (activeColumn = i)}>
         {column.label}
       </button>
     {/each}
