@@ -15,3 +15,4 @@ Retire rules that no longer apply during finalizing.
 - Svelte 5 resolves to `index-server.js` (SSR) in non-browser environments. For component tests with `@testing-library/svelte`, add `resolve: { conditions: ['browser'] }` to `vite.config.js`.
 - `@testing-library/svelte` with happy-dom doesn't auto-cleanup between tests. Add `afterEach(cleanup)` to each test file.
 - Always verify migration edits actually saved by grepping for old patterns afterward — the edit tool can silently fail if oldText doesn't match exactly.
+- Svelte 5 does not support event modifiers like `onclick|stopPropagation`. Use `onclick={(e) => { e.stopPropagation(); handler(); }}` instead.
