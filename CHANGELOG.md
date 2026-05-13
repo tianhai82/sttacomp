@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-05-13 — Hash-based routing
+
+- Added `svelte-spa-router` for client-side hash routing
+- Draw Positions accessible at `#/` (default)
+- Do Draw accessible at `#/draw-prep`
+- Shareable URLs, browser back/forward, and bookmarks now work
+- Ready for nested routes (e.g. `#/draw-prep/:id`)
+
 ## 2026-05-09 — Modernize toolchain
 
 - Upgraded to Svelte 5 (runes), Vite 6, Tailwind CSS 4
