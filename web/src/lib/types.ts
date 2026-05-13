@@ -12,6 +12,13 @@ export interface Group {
   runnerUp: Player | null;
 }
 
+export interface DrawSummary {
+  id: string;
+  eventName: string;
+  numGroups: number;
+  createdAt: number;
+}
+
 export interface DrawPrepState {
   id: string;
   createdAt: number;

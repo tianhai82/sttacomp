@@ -1,6 +1,6 @@
 // web/src/lib/storage.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { save, load, loadAll, remove, loadMostRecent } from "./storage";
+import { save, load, loadAll, remove, loadMostRecent, listAll } from "./storage";
 import type { DrawPrepState } from "./types";
 
 // Mock localStorage
@@ -160,6 +160,55 @@ describe("storage", () => {
       // undefined gets default value from makeState spread, but actual load returns as-is
       // The import logic handles backward compat; storage just stores what it gets
       expect(loaded).toBeDefined();
+    });
+  });
+
+  describe("listAll", () => {
+    it("returns empty array when store is empty", () => {
+      expect(listAll()).toEqual([]);
+    });
+
+    it("returns summaries sorted by createdAt descending", () => {
+      const now = Date.now();
+      const oldest = makeState({ id: "oldest", createdAt: now - 2000, eventName: "Old" });
+      const newest = makeState({ id: "newest", createdAt: now, eventName: "New" });
+      const middle = makeState({ id: "middle", createdAt: now - 1000, numGroups: 8, eventName: "Mid" });
+      save(oldest);
+      save(middle);
+      save(newest);
+
+      const result = listAll();
+      expect(result).toHaveLength(3);
+      expect(result[0].id).toBe("newest");
+      expect(result[1].id).toBe("middle");
+      expect(result[2].id).toBe("oldest");
+      expect(result[0].eventName).toBe("New");
+      expect(result[1].numGroups).toBe(8);
+    });
+
+    it("purges expired entries and excludes them from results", () => {
+      const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+      const fresh = makeState({ id: "fresh", createdAt: Date.now(), eventName: "Fresh" });
+      const expired = makeState({ id: "expired", createdAt: Date.now() - sevenDaysMs - 1, eventName: "Gone" });
+      save(fresh);
+      save(expired);
+
+      const result = listAll();
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe("fresh");
+    });
+
+    it("returns empty eventName as empty string when not set", () => {
+      const state = makeState({ id: "no-name", createdAt: Date.now() });
+      save(state);
+      // Manually remove eventName from stored data to simulate backward compat
+      const raw = JSON.parse(localStorage.getItem("draw-prep")!);
+      delete raw["no-name"].eventName;
+      localStorage.setItem("draw-prep", JSON.stringify(raw));
+
+      const result = listAll();
+      expect(result).toHaveLength(1);
+      expect(result[0].eventName).toBe("");
     });
   });
 });

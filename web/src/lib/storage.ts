@@ -1,5 +1,5 @@
 // web/src/lib/storage.ts
-import type { DrawPrepState } from "./types";
+import type { DrawPrepState, DrawSummary } from "./types";
 
 const STORAGE_KEY = "draw-prep";
 const EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
@@ -70,3 +70,27 @@ export function loadMostRecent(): DrawPrepState | null {
     entry.createdAt > mostRecent.createdAt ? entry : mostRecent
   );
 }
+
+export function listAll(): DrawSummary[] {
+  const store = getStore();
+  let changed = false;
+  const summaries: DrawSummary[] = [];
+  for (const [id, entry] of Object.entries(store)) {
+    if (isExpired(entry.createdAt)) {
+      delete store[id];
+      changed = true;
+    } else {
+      summaries.push({
+        id: entry.id,
+        eventName: entry.eventName || "",
+        numGroups: entry.numGroups,
+        createdAt: entry.createdAt,
+      });
+    }
+  }
+  if (changed) {
+    setStore(store);
+  }
+  return summaries.sort((a, b) => b.createdAt - a.createdAt);
+}
+
