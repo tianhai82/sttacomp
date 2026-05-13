@@ -7,6 +7,6 @@ Last updated: 2026-05-13T00:00:00Z
 
 | # | Status | Task | Commit |
 |---|--------|------|--------|
-| 1 | ⬜ pending | Add `listAll()` to storage with tests | — |
-| 2 | ⬜ pending | Create `DrawList.svelte` component | — |
-| 3 | ⬜ pending | Wire `DrawPrep.svelte` — 3-view state machine + back button | — |
+| 1 | ✅ done | Add `listAll()` to storage with tests | cb22bb3 |
+| 2 | ✅ done | Create `DrawList.svelte` component | 8bff939 |
+| 3 | ✅ done | Wire `DrawPrep.svelte` — 3-view state machine + back button | cc247cd |
