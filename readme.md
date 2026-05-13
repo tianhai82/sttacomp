@@ -6,6 +6,7 @@ A tournament draw calculator and draw preparation tool built with Svelte and dep
 
 - **Draw Calculator** — Compute knockout tournament draw positions from group stage results
 - **Draw Preparation** — Define groups, fill in winner/runner-up details, draw positions interactively, and preview the knockout chart. Supports event naming, export/import of draw state with 7-day local persistence.
+- **Multiple Draws** — All draws are saved locally and shown on a "My Draws" landing page. Create, open, switch between, and delete draws easily.
 - **Responsive** — Desktop side-by-side layout; mobile bottom tab bar with chart sub-tabs
 
 ## Tech Stack

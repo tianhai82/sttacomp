@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-05-14 — Multiple saved draws
+
+- Added "My Draws" landing page on /draw-prep — card grid of all saved draws
+- Create, open, switch between, and delete draws from the list
+- Draws sorted by most recently modified
+- "Back to My Draws" link in the editing view
+- Empty state with "Create your first draw" CTA when no draws exist
+- Added `listAll()` to storage module with full test coverage (4 new tests)
+
 ## 2026-05-13 — Hash-based routing
 
 - Added `svelte-spa-router` for client-side hash routing
