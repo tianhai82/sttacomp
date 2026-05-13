@@ -10,6 +10,7 @@ A tournament draw calculator and draw preparation tool built with Svelte and dep
 
 ## Tech Stack
 - **Frontend:** Svelte 5 (runes) + Vite 6 + Tailwind CSS 4
+- **Routing:** svelte-spa-router (hash-based)
 - **Testing:** Vitest + @testing-library/svelte
 - **Deployment:** Firebase Hosting (static site)
 
