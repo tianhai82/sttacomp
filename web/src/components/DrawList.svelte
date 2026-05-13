@@ -53,7 +53,7 @@
           </p>
           <button
             class="absolute top-3 right-3 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-            onclick|stopPropagation={() => handleDelete(draw.id, draw.eventName)}
+            onclick={(e) => { e.stopPropagation(); handleDelete(draw.id, draw.eventName); }}
             title="Delete draw"
           >
             🗑

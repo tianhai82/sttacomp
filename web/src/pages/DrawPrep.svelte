@@ -4,8 +4,9 @@
   import { calculateDraws } from "../lib/calculateDraw";
   import DrawPrepChart from "../components/DrawPrepChart.svelte";
   import DrawPrepGroups from "../components/DrawPrepGroups.svelte";
+  import DrawList from "../components/DrawList.svelte";
   import { getOccupiedPositions, getAvailablePositions, deriveActivePositions, isInOppositeHalf, clearInvalidRunnerUps } from "../lib/positions";
-  import { save as storageSave, remove as storageRemove, loadAll, loadMostRecent } from "../lib/storage";
+  import { save as storageSave, remove as storageRemove, loadAll, load as storageLoad, listAll } from "../lib/storage";
   import { formatExportFilename } from "../lib/exportFilename";
   import { onMount } from "svelte";
 
@@ -17,6 +18,8 @@
   let warnings = $state([]);
   let mobileTab = $state('groups'); // 'groups' | 'chart'
   let state = $state(null); // DrawPrepState | null
+  let view = $state('list'); // 'list' | 'setup' | 'editing'
+  let draws = $state([]); // DrawSummary[]
 
   // Occupied positions derived reactively from groups
   let occupiedPositions = $derived(state ? getOccupiedPositions(state.groups) : new Set());
@@ -111,6 +114,7 @@
       const data = await computeDrawData(num);
       state = buildState(num, makeEmptyGroups(num), data);
       confirmed = true;
+      view = 'editing';
     } catch (e) {
       error = e.message || "Failed to calculate draw";
     }
@@ -194,6 +198,7 @@
       eventNameInput = data.eventName || "";
       state = buildState(data.groups.length, data.groups, drawData);
       confirmed = true;
+      view = 'editing';
       error = '';
       warnings = [];
     } catch (e) {
@@ -225,12 +230,7 @@
     if (state) {
       storageRemove(state.id);
     }
-    state = null;
-    confirmed = false;
-    numGroupsInput = '';
-    eventNameInput = '';
-    error = '';
-    warnings = [];
+    backToList();
   }
 
   // Auto-save: debounce via $effect with cleanup
@@ -264,25 +264,62 @@
     };
   }
 
-  // On mount: purge expired entries and load most recent state
+  // On mount: load draw list, show list (or setup if empty)
   onMount(async () => {
-    loadAll(); // purge expired
-    const recent = loadMostRecent();
-    if (!recent) return;
-
-    try {
-      const drawData = await computeDrawData(recent.groups.length);
-      state = { ...recent, ...drawData };
-      eventNameInput = recent.eventName || "";
-      confirmed = true;
-    } catch (e) {
-      storageRemove(recent.id);
+    draws = listAll();
+    if (draws.length === 0) {
+      view = 'setup';
     }
   });
+
+  async function openDraw(id) {
+    loadAll(); // purge expired
+    const loaded = storageLoad(id);
+    if (!loaded) {
+      // Draw expired or missing, refresh list
+      draws = listAll();
+      return;
+    }
+    try {
+      const drawData = await computeDrawData(loaded.groups.length);
+      state = { ...loaded, ...drawData };
+      eventNameInput = loaded.eventName || "";
+      view = 'editing';
+    } catch (e) {
+      storageRemove(id);
+      draws = listAll();
+    }
+  }
+
+  function newDraw() {
+    state = null;
+    confirmed = false;
+    numGroupsInput = '';
+    eventNameInput = '';
+    error = '';
+    warnings = [];
+    view = 'setup';
+  }
+
+  function deleteDraw(id) {
+    storageRemove(id);
+    draws = listAll();
+  }
+
+  function backToList() {
+    state = null;
+    confirmed = false;
+    draws = listAll();
+    view = draws.length > 0 ? 'list' : 'setup';
+  }
 </script>
 
 <div class="container mx-auto pt-3 px-3 flex flex-col h-[calc(100vh-3rem)] pb-14 md:pb-0">
-  {#if !confirmed}
+  {#if view === 'list'}
+    <div class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-white">
+      <DrawList {draws} onOpen={openDraw} onNew={newDraw} onDelete={deleteDraw} />
+    </div>
+  {:else if view === 'setup' && !confirmed}
     <div class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-white">
       <h2 class="text-lg font-medium mb-4">Draw Preparation Setup</h2>
       <div class="mb-3">
@@ -321,7 +358,7 @@
         <div class="text-red-600 text-sm">{error}</div>
       {/if}
     </div>
-  {:else if state}
+  {:else if view === 'editing' && state}
     {#if warnings.length > 0}
       <div class="mx-2 mb-2">
         {#each warnings as warning}
@@ -331,6 +368,14 @@
         {/each}
       </div>
     {/if}
+    <div class="flex items-center mx-2 mb-2">
+      <button
+        class="text-sm text-red-600 hover:text-red-800 font-medium"
+        onclick={backToList}
+      >
+        ← Back to My Draws
+      </button>
+    </div>
     <div class="flex flex-col md:flex-row gap-4 flex-1 min-h-0">
       <!-- Left panel: Groups form -->
       <div class="md:w-1/2 overflow-y-auto min-h-0 {mobileTab === 'groups' ? '' : 'hidden md:block'}">
@@ -360,7 +405,7 @@
   {/if}
 
   <!-- Mobile bottom tab bar -->
-  {#if confirmed && state}
+  {#if view === 'editing' && state}
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 flex md:hidden z-40">
       <button
         class="flex-1 py-3 text-sm font-medium text-center {mobileTab === 'groups'
