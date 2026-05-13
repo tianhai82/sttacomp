@@ -2,8 +2,14 @@
   import Logo from "./components/Logo.svelte";
   import Draw from "./pages/Draw.svelte";
   import DrawPrep from "./pages/DrawPrep.svelte";
+  import Router from "svelte-spa-router";
+  import { link } from "svelte-spa-router";
+  import active from "svelte-spa-router/active";
 
-  let selectedPage = $state("draw");
+  const routes = {
+    "/": Draw,
+    "/draw-prep": DrawPrep,
+  };
 </script>
 
 <div
@@ -14,26 +20,22 @@
     <span class="sm:hidden text-base">TT Draw</span>
   </h1>
   <div class="flex h-full">
-    <button
-      class="h-full text-white ripple focus:outline-none px-3 border-b-2 {selectedPage === 'draw'
-        ? 'border-white bg-red-700'
-        : 'border-transparent bg-red-600'}"
-      onclick={() => (selectedPage = "draw")}>
+    <a
+      href="/"
+      use:link
+      use:active={{ path: "/", className: "border-white bg-red-700", inactiveClassName: "border-transparent bg-red-600" }}
+      class="h-full text-white ripple focus:outline-none px-3 border-b-2 flex items-center">
       <span class="hidden sm:inline">Draw Positions</span>
       <span class="sm:hidden text-sm">Positions</span>
-    </button>
-    <button
-      class="h-full text-white ripple focus:outline-none px-3 border-b-2 {selectedPage === 'drawPrep'
-        ? 'border-white bg-red-700'
-        : 'border-transparent bg-red-600'}"
-      onclick={() => (selectedPage = "drawPrep")}>
+    </a>
+    <a
+      href="/draw-prep"
+      use:link
+      use:active={{ path: "/draw-prep", className: "border-white bg-red-700", inactiveClassName: "border-transparent bg-red-600" }}
+      class="h-full text-white ripple focus:outline-none px-3 border-b-2 flex items-center">
       <span class="hidden sm:inline">Do Draw</span>
       <span class="sm:hidden text-sm">Draw</span>
-    </button>
+    </a>
   </div>
 </div>
-{#if selectedPage === 'draw'}
-  <Draw />
-{:else}
-  <DrawPrep />
-{/if}
+<Router {routes} />
