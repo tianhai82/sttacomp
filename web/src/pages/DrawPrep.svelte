@@ -264,12 +264,9 @@
     };
   }
 
-  // On mount: load draw list, show list (or setup if empty)
+  // On mount: load draw list
   onMount(async () => {
     draws = listAll();
-    if (draws.length === 0) {
-      view = 'setup';
-    }
   });
 
   async function openDraw(id) {
@@ -310,7 +307,7 @@
     state = null;
     confirmed = false;
     draws = listAll();
-    view = draws.length > 0 ? 'list' : 'setup';
+    view = 'list';
   }
 </script>
 
