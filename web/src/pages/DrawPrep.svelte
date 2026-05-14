@@ -314,7 +314,7 @@
 <div class="container mx-auto pt-3 px-3 flex flex-col h-[calc(100vh-3rem)] pb-14 md:pb-0">
   {#if view === 'list'}
     <div class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-white">
-      <DrawList {draws} onOpen={openDraw} onNew={newDraw} onDelete={deleteDraw} />
+      <DrawList {draws} onOpen={openDraw} onNew={newDraw} onDelete={deleteDraw} onImport={importDraw} />
     </div>
   {:else if view === 'setup' && !confirmed}
     <div class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-white">
