@@ -23,7 +23,6 @@ describe("DrawPrepGroups", () => {
         onChange: vi.fn(),
         onExport: vi.fn(),
         onImport: vi.fn(),
-        onReset: vi.fn(),
       },
     });
     expect(container.textContent).toContain("Group 1");
@@ -42,27 +41,10 @@ describe("DrawPrepGroups", () => {
         onChange: vi.fn(),
         onExport,
         onImport: vi.fn(),
-        onReset: vi.fn(),
       },
     });
     await fireEvent.click(getByText("Export"));
     expect(onExport).toHaveBeenCalled();
   });
 
-  it("fires onReset when Reset button clicked", async () => {
-    const onReset = vi.fn();
-    const { getByText } = render(DrawPrepGroups, {
-      props: {
-        groups: makeGroups(2),
-        availableWinnerPositions: [],
-        availableRunnerUpPositionsPerGroup: [],
-        onChange: vi.fn(),
-        onExport: vi.fn(),
-        onImport: vi.fn(),
-        onReset,
-      },
-    });
-    await fireEvent.click(getByText("Reset"));
-    expect(onReset).toHaveBeenCalled();
-  });
 });

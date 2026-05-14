@@ -9,7 +9,6 @@
     onChange,
     onExport,
     onImport,
-    onReset,
   } = $props();
 
   function handleUpdate(data) {
@@ -56,6 +55,5 @@
   <div class="flex gap-3 mt-4 px-1">
     <Btn cls="bg-blue-500 text-white" onclick={() => onExport?.()}>Export</Btn>
     <Btn cls="bg-gray-500 text-white" onclick={triggerImport}>Import</Btn>
-    <Btn cls="bg-red-700 text-white" onclick={() => onReset?.()}>Reset</Btn>
   </div>
 </div>

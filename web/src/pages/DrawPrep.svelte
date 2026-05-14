@@ -226,7 +226,7 @@
   }
 
   function resetDraw() {
-    if (!confirm('Reset will clear all data. Continue?')) return;
+    if (!confirm('Delete this draw? This cannot be undone.')) return;
     if (state) {
       storageRemove(state.id);
     }
@@ -368,12 +368,19 @@
         {/each}
       </div>
     {/if}
-    <div class="flex items-center mx-2 mb-2">
+    <div class="flex items-center justify-between mx-2 mb-2">
       <button
         class="text-sm text-red-600 hover:text-red-800 font-medium"
         onclick={backToList}
       >
         ← Back to My Draws
+      </button>
+      <button
+        class="text-gray-400 hover:text-red-500 transition-colors"
+        onclick={resetDraw}
+        title="Delete draw"
+      >
+        🗑
       </button>
     </div>
     <div class="flex flex-col md:flex-row gap-4 flex-1 min-h-0">
@@ -390,7 +397,6 @@
             onChange={handleGroupsChange}
             onExport={exportDraw}
             onImport={importDraw}
-            onReset={resetDraw}
           />
         </div>
       </div>
