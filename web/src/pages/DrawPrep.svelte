@@ -8,6 +8,7 @@
   import { getOccupiedPositions, getAvailablePositions, deriveActivePositions, isInOppositeHalf, clearInvalidRunnerUps } from "../lib/positions";
   import { save as storageSave, remove as storageRemove, loadAll, load as storageLoad, listAll } from "../lib/storage";
   import { formatExportFilename } from "../lib/exportFilename";
+  import { resolveImport } from "../lib/importDraw";
   import { push } from "svelte-spa-router";
   import { onDestroy } from "svelte";
 
@@ -146,95 +147,15 @@
   }
 
   async function importDraw(file) {
+    error = '';
     try {
-      const text = await file.text();
-      const data = JSON.parse(text);
-
-      // Validate structure
-      if (typeof data.numGroups !== 'number' || !Array.isArray(data.groups)) {
-        error = 'Invalid file: must have numGroups and groups';
-        return;
-      }
-      if (data.numGroups !== data.groups.length) {
-        error = `Invalid file: numGroups (${data.numGroups}) does not match groups array length (${data.groups.length})`;
-        return;
-      }
-      for (let i = 0; i < data.groups.length; i++) {
-        const g = data.groups[i];
-        if (!g.winner || typeof g.hasRunnerUp !== 'boolean') {
-          error = `Invalid file: group ${i + 1} is missing winner or hasRunnerUp`;
-          return;
-        }
-        if (g.runnerUp != null && (typeof g.runnerUp.na !== 'string' || typeof g.runnerUp.name !== 'string')) {
-          error = `Invalid file: group ${i + 1} runner-up has invalid fields`;
-          return;
-        }
-      }
-
-      // Recompute base positions from group count
-      const drawData = await computeDrawData(data.numGroups);
-
-      // Validate placed positions within ranges
-      const allPositions = [
-        ...drawData.baseWinnerPositions,
-        ...drawData.baseRunnerUpPositions,
-        ...drawData.baseByePositions,
-      ];
-      const posSet = new Set(allPositions);
-      for (let i = 0; i < data.groups.length; i++) {
-        const g = data.groups[i];
-        if (g.winner.position != null && !posSet.has(g.winner.position)) {
-          error = `Invalid file: group ${i + 1} winner position ${g.winner.position} is out of range`;
-          return;
-        }
-        if (g.runnerUp?.position != null && !posSet.has(g.runnerUp.position)) {
-          error = `Invalid file: group ${i + 1} runner-up position ${g.runnerUp.position} is out of range`;
-          return;
-        }
-      }
-
-      // Check for name collision
-      const importedEventName = (data.eventName || "").trim();
-      const existingDraws = listAll();
-      const collision = existingDraws.find(d => d.eventName === importedEventName);
-
-      let finalEventName = importedEventName;
-      let existingId = null;
-
-      if (collision) {
-        const choice = confirm(`A draw named "${importedEventName}" already exists.\n\nClick OK to replace it, or Cancel to import with a new name.`);
-        if (choice) {
-          // Replace — reuse the existing ID
-          existingId = collision.id;
-        } else {
-          // Prompt for new name — loop until unique or cancelled
-          let newName = null;
-          while (true) {
-            newName = prompt(`Enter a new name for the imported draw:`, importedEventName);
-            if (newName === null) return; // user cancelled the whole import
-            newName = newName.trim();
-            if (!newName) continue; // empty name, re-prompt
-            const anotherCollision = existingDraws.find(d => d.eventName === newName);
-            if (!anotherCollision) break;
-            alert(`A draw named "${newName}" also exists. Please choose a different name.`);
-          }
-          finalEventName = newName;
-        }
-      }
-
-      // Build state
-      if (existingId) {
-        state = { ...buildState(data.groups.length, data.groups, drawData, finalEventName), id: existingId };
-      } else {
-        state = buildState(data.groups.length, data.groups, drawData, finalEventName);
-      }
-
-      storageSave(state);
-      push(`/draw-prep/draw/${state.id}`);
-      error = '';
+      const result = await resolveImport(file, computeDrawData, buildState);
+      if (!result) return; // user cancelled
+      state = result.state;
+      push(`/draw-prep/draw/${result.state.id}`);
       warnings = [];
     } catch (e) {
-      error = 'Failed to import: ' + (e.message || 'unknown error');
+      error = e.message || 'Failed to import';
     }
   }
 
