@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-05-16 — URL routing & import improvements
+
+- Added `/draw-prep/draw/:id` route — each draw has a shareable URL with browser back/forward support
+- Import button always visible in DrawList header (not just during editing or when list is empty)
+- Drag & drop works on non-empty draw list
+- Import collision handling: replace existing draw or import with a new name (with re-prompt on duplicate names)
+- No more inappropriate "replace current draw" warning on empty list
+- Removed Import button from editing view (DrawPrepGroups) — import creates a new draw, belongs in list context
+- `onDestroy` saves state on component teardown to prevent data loss on navigation
+- Extracted import logic to `importDraw.ts` with 12 unit tests
+
 ## 2026-05-16 — Empty state & delete UX
 
 - Always show "My Draws" list (no longer skips to setup when empty)
