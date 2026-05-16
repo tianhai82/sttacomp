@@ -159,7 +159,7 @@
     }
   }
 
-  let importFileInput;
+  let importFileInput = $state();
 
   function triggerFileImport() {
     importFileInput.click();
