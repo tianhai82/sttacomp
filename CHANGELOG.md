@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-05-16 — Empty state & delete UX
+
+- Always show "My Draws" list (no longer skips to setup when empty)
+- Empty state now has drag-and-drop zone + Import Draw button
+- Moved delete action to trash icon in top nav bar (removed Reset button from groups)
+- Updated confirm dialog text from "Reset" to "Delete"
+
 ## 2026-05-14 — Multiple saved draws
 
 - Added "My Draws" landing page on /draw-prep — card grid of all saved draws
