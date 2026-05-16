@@ -16,3 +16,4 @@ Retire rules that no longer apply during finalizing.
 - `@testing-library/svelte` with happy-dom doesn't auto-cleanup between tests. Add `afterEach(cleanup)` to each test file.
 - Always verify migration edits actually saved by grepping for old patterns afterward — the edit tool can silently fail if oldText doesn't match exactly.
 - Svelte 5 does not support event modifiers like `onclick|stopPropagation`. Use `onclick={(e) => { e.stopPropagation(); handler(); }}` instead.
+- Explicitly save state before clearing it when navigating away (e.g. `state = null` then `push()`). `onDestroy` won't fire in time if state is already nulled — the save will be skipped.

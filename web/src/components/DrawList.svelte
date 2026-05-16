@@ -7,6 +7,7 @@
     onNew,
     onDelete,
     onImport,
+    onTriggerFileImport,
   } = $props();
 
   function formatDate(ts) {
@@ -26,7 +27,6 @@
 
   let isDragOver = $state(false);
   let dragCounter = 0;
-  let fileInput;
 
   function handleDragEnter(e) {
     e.preventDefault();
@@ -53,22 +53,22 @@
       onImport?.(file);
     }
   }
-
-  function triggerFileImport() {
-    fileInput.click();
-  }
-
-  function onFileSelected(e) {
-    const file = e.target.files[0];
-    if (file) onImport?.(file);
-    e.target.value = '';
-  }
 </script>
 
-<div>
+<div
+  ondragenter={handleDragEnter}
+  ondragover={handleDragOver}
+  ondragleave={handleDragLeave}
+  ondrop={handleDrop}
+  role="region"
+  aria-label="My Draws"
+>
   <div class="flex items-center justify-between mb-4">
     <h2 class="text-lg font-medium">My Draws</h2>
-    <Btn cls="bg-red-500 text-white" onclick={() => onNew?.()}>+ New Draw</Btn>
+    <div class="flex gap-2">
+      <Btn cls="bg-gray-500 text-white" onclick={() => onTriggerFileImport?.()}>Import</Btn>
+      <Btn cls="bg-red-500 text-white" onclick={() => onNew?.()}>+ New Draw</Btn>
+    </div>
   </div>
 
   {#if draws.length === 0}
@@ -76,22 +76,11 @@
       class="text-center py-12 px-6 rounded-lg border-2 border-dashed transition-colors {isDragOver
         ? 'border-blue-400 bg-blue-50 text-blue-600'
         : 'border-gray-300 text-gray-500'}"
-      ondragenter={handleDragEnter}
-      ondragover={handleDragOver}
-      ondragleave={handleDragLeave}
-      ondrop={handleDrop}
     >
       <p class="text-4xl mb-3">📄</p>
       <p class="text-lg mb-2">No draws yet</p>
-      <p class="text-sm mb-4">Drag & drop a .json file here</p>
-      <div class="flex items-center justify-center gap-3">
-        <Btn cls="bg-gray-500 text-white" onclick={triggerFileImport}>Import Draw</Btn>
-        <span class="text-gray-400 text-sm">or</span>
-        <Btn cls="bg-red-500 text-white" onclick={() => onNew?.()}>+ New Draw</Btn>
-      </div>
+      <p class="text-sm mb-4">Drag & drop a .json file here, or use the Import button above</p>
     </div>
-    <!-- Hidden file input -->
-    <input bind:this={fileInput} type="file" accept=".json" class="hidden" onchange={onFileSelected} />
   {:else}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {#each draws as draw (draw.id)}

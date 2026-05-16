@@ -8,18 +8,23 @@
   import { getOccupiedPositions, getAvailablePositions, deriveActivePositions, isInOppositeHalf, clearInvalidRunnerUps } from "../lib/positions";
   import { save as storageSave, remove as storageRemove, loadAll, load as storageLoad, listAll } from "../lib/storage";
   import { formatExportFilename } from "../lib/exportFilename";
-  import { onMount } from "svelte";
+  import { push } from "svelte-spa-router";
+  import { onDestroy } from "svelte";
+
+  let { params = {} } = $props();
 
   let numGroupsInput = $state("");
   let eventNameInput = $state("");
-  let fileInput;
   let confirmed = $state(false);
   let error = $state("");
   let warnings = $state([]);
   let mobileTab = $state('groups'); // 'groups' | 'chart'
   let state = $state(null); // DrawPrepState | null
-  let view = $state('list'); // 'list' | 'setup' | 'editing'
+  let showSetup = $state(false);
   let draws = $state([]); // DrawSummary[]
+
+  // Derive view from route params
+  let view = $derived(params.id ? 'editing' : 'list');
 
   // Occupied positions derived reactively from groups
   let occupiedPositions = $derived(state ? getOccupiedPositions(state.groups) : new Set());
@@ -113,17 +118,12 @@
     try {
       const data = await computeDrawData(num);
       state = buildState(num, makeEmptyGroups(num), data);
-      confirmed = true;
-      view = 'editing';
+      storageSave(state);
+      showSetup = false;
+      push(`/draw-prep/draw/${state.id}`);
     } catch (e) {
       error = e.message || "Failed to calculate draw";
     }
-  }
-
-  function onSetupFileSelected(e) {
-    const file = e.target.files[0];
-    if (file) importDraw(file);
-    e.target.value = '';
   }
 
   function handleGroupsChange(newGroups) {
@@ -193,17 +193,61 @@
         }
       }
 
-      if (!confirm('Importing will replace the current draw. Continue?')) return;
+      // Check for name collision
+      const importedEventName = (data.eventName || "").trim();
+      const existingDraws = listAll();
+      const collision = existingDraws.find(d => d.eventName === importedEventName);
 
-      eventNameInput = data.eventName || "";
-      state = buildState(data.groups.length, data.groups, drawData);
-      confirmed = true;
-      view = 'editing';
+      let finalEventName = importedEventName;
+      let existingId = null;
+
+      if (collision) {
+        const choice = confirm(`A draw named "${importedEventName}" already exists.\n\nClick OK to replace it, or Cancel to import with a new name.`);
+        if (choice) {
+          // Replace — reuse the existing ID
+          existingId = collision.id;
+        } else {
+          // Prompt for new name — loop until unique or cancelled
+          let newName = null;
+          while (true) {
+            newName = prompt(`Enter a new name for the imported draw:`, importedEventName);
+            if (newName === null) return; // user cancelled the whole import
+            newName = newName.trim();
+            if (!newName) continue; // empty name, re-prompt
+            const anotherCollision = existingDraws.find(d => d.eventName === newName);
+            if (!anotherCollision) break;
+            alert(`A draw named "${newName}" also exists. Please choose a different name.`);
+          }
+          finalEventName = newName;
+        }
+      }
+
+      // Build state
+      if (existingId) {
+        state = { ...buildState(data.groups.length, data.groups, drawData, finalEventName), id: existingId };
+      } else {
+        state = buildState(data.groups.length, data.groups, drawData, finalEventName);
+      }
+
+      storageSave(state);
+      push(`/draw-prep/draw/${state.id}`);
       error = '';
       warnings = [];
     } catch (e) {
       error = 'Failed to import: ' + (e.message || 'unknown error');
     }
+  }
+
+  let importFileInput;
+
+  function triggerFileImport() {
+    importFileInput.click();
+  }
+
+  function onFileSelected(e) {
+    const file = e.target.files[0];
+    if (file) importDraw(file);
+    e.target.value = '';
   }
 
   function exportDraw() {
@@ -230,7 +274,8 @@
     if (state) {
       storageRemove(state.id);
     }
-    backToList();
+    state = null;
+    push('/draw-prep');
   }
 
   // Auto-save: debounce via $effect with cleanup
@@ -243,6 +288,11 @@
     }
   });
 
+  // Flush save on component destruction
+  onDestroy(() => {
+    if (state) storageSave(state);
+  });
+
   async function computeDrawData(numGroups) {
     const data = await calculateDraws({ winners: numGroups, runnerups: numGroups });
     return {
@@ -253,39 +303,46 @@
     };
   }
 
-  function buildState(numGroups, groups, drawData) {
+  function buildState(numGroups, groups, drawData, eventName) {
     return {
       id: crypto.randomUUID(),
       createdAt: Date.now(),
       numGroups,
       groups,
-      eventName: eventNameInput.trim(),
+      eventName: typeof eventName === 'string' ? eventName : eventNameInput.trim(),
       ...drawData,
     };
   }
 
-  // On mount: load draw list
-  onMount(async () => {
-    draws = listAll();
+  // Reactive: load data based on route
+  $effect(() => {
+    const id = params.id;
+    if (id) {
+      loadDrawById(id);
+    } else {
+      draws = listAll();
+    }
   });
 
-  async function openDraw(id) {
+  async function loadDrawById(id) {
     loadAll(); // purge expired
     const loaded = storageLoad(id);
     if (!loaded) {
-      // Draw expired or missing, refresh list
-      draws = listAll();
+      push('/draw-prep');
       return;
     }
     try {
       const drawData = await computeDrawData(loaded.groups.length);
       state = { ...loaded, ...drawData };
       eventNameInput = loaded.eventName || "";
-      view = 'editing';
     } catch (e) {
       storageRemove(id);
-      draws = listAll();
+      push('/draw-prep');
     }
+  }
+
+  function openDraw(id) {
+    push(`/draw-prep/draw/${id}`);
   }
 
   function newDraw() {
@@ -295,7 +352,7 @@
     eventNameInput = '';
     error = '';
     warnings = [];
-    view = 'setup';
+    showSetup = true;
   }
 
   function deleteDraw(id) {
@@ -304,58 +361,15 @@
   }
 
   function backToList() {
+    if (state) storageSave(state);
     state = null;
     confirmed = false;
-    draws = listAll();
-    view = 'list';
+    push('/draw-prep');
   }
 </script>
 
 <div class="container mx-auto pt-3 px-3 flex flex-col h-[calc(100vh-3rem)] pb-14 md:pb-0">
-  {#if view === 'list'}
-    <div class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-white">
-      <DrawList {draws} onOpen={openDraw} onNew={newDraw} onDelete={deleteDraw} onImport={importDraw} />
-    </div>
-  {:else if view === 'setup' && !confirmed}
-    <div class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-white">
-      <h2 class="text-lg font-medium mb-4">Draw Preparation Setup</h2>
-      <div class="mb-3">
-        <label class="block text-gray-700 font-medium mb-1" for="eventName">Event name</label>
-        <input
-          id="eventName"
-          type="text"
-          placeholder="e.g. U13 Boys Singles"
-          class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-red-500"
-          bind:value={eventNameInput}
-          onkeydown={(e) => e.key === 'Enter' && confirmGroups()}
-        />
-      </div>
-      <div class="mb-3">
-        <label class="block text-gray-700 font-medium mb-1" for="numGroups">Number of groups</label>
-        <input
-          id="numGroups"
-          type="number"
-          min="1"
-          max="128"
-          class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-red-500"
-          bind:value={numGroupsInput}
-          onkeydown={(e) => e.key === 'Enter' && confirmGroups()}
-        />
-      </div>
-      <div class="flex items-center gap-3">
-        <Btn cls="bg-red-500 text-white" onclick={confirmGroups}>
-          Confirm
-        </Btn>
-        <Btn cls="bg-gray-500 text-white" onclick={() => fileInput.click()}>
-          Import
-        </Btn>
-        <input bind:this={fileInput} type="file" accept=".json" class="hidden" onchange={onSetupFileSelected} />
-      </div>
-      {#if error}
-        <div class="text-red-600 text-sm">{error}</div>
-      {/if}
-    </div>
-  {:else if view === 'editing' && state}
+  {#if view === 'editing' && state}
     {#if warnings.length > 0}
       <div class="mx-2 mb-2">
         {#each warnings as warning}
@@ -393,7 +407,6 @@
             availableRunnerUpPositionsPerGroup={availableRunnerUpPositionsPerGroup}
             onChange={handleGroupsChange}
             onExport={exportDraw}
-            onImport={importDraw}
           />
         </div>
       </div>
@@ -405,6 +418,46 @@
         </div>
       </div>
     </div>
+  {:else}
+    <div class="rounded-lg mt-4 mx-2 p-4 shadow-md bg-white">
+      {#if showSetup}
+        <h2 class="text-lg font-medium mb-4">Draw Preparation Setup</h2>
+        <div class="mb-3">
+          <label class="block text-gray-700 font-medium mb-1" for="eventName">Event name</label>
+          <input
+            id="eventName"
+            type="text"
+            placeholder="e.g. U13 Boys Singles"
+            class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-red-500"
+            bind:value={eventNameInput}
+            onkeydown={(e) => e.key === 'Enter' && confirmGroups()}
+          />
+        </div>
+        <div class="mb-3">
+          <label class="block text-gray-700 font-medium mb-1" for="numGroups">Number of groups</label>
+          <input
+            id="numGroups"
+            type="number"
+            min="1"
+            max="128"
+            class="border border-gray-300 rounded px-3 py-1 w-full focus:outline-none focus:border-red-500"
+            bind:value={numGroupsInput}
+            onkeydown={(e) => e.key === 'Enter' && confirmGroups()}
+          />
+        </div>
+        <div class="flex items-center gap-3">
+          <Btn cls="bg-red-500 text-white" onclick={confirmGroups}>Confirm</Btn>
+          <Btn cls="bg-gray-500 text-white" onclick={() => { showSetup = false; }}>Cancel</Btn>
+        </div>
+        {#if error}
+          <div class="text-red-600 text-sm mt-2">{error}</div>
+        {/if}
+      {:else}
+        <DrawList {draws} onOpen={openDraw} onNew={newDraw} onDelete={deleteDraw} onImport={importDraw} onTriggerFileImport={triggerFileImport} />
+      {/if}
+    </div>
+    <!-- Hidden file input for import -->
+    <input bind:this={importFileInput} type="file" accept=".json" class="hidden" onchange={onFileSelected} />
   {/if}
 
   <!-- Mobile bottom tab bar -->

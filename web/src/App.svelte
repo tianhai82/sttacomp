@@ -9,6 +9,7 @@
   const routes = {
     "/": Draw,
     "/draw-prep": DrawPrep,
+    "/draw-prep/draw/:id": DrawPrep,
   };
 </script>
 

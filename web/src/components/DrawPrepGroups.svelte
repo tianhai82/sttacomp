@@ -8,7 +8,6 @@
     availableRunnerUpPositionsPerGroup = [],
     onChange,
     onExport,
-    onImport,
   } = $props();
 
   function handleUpdate(data) {
@@ -22,19 +21,7 @@
     onChange?.(updated);
   }
 
-  let fileInput;
-
-  function triggerImport() {
-    fileInput.click();
-  }
-
-  function onFileSelected(e) {
-    const file = e.target.files[0];
-    if (file) {
-      onImport?.(file);
-    }
-    e.target.value = '';
-  }
+  // Import button removed — import now happens from DrawList in list view
 </script>
 
 <div>
@@ -48,12 +35,8 @@
     />
   {/each}
 
-  <!-- Hidden file input for import -->
-  <input bind:this={fileInput} type="file" accept=".json" class="hidden" onchange={onFileSelected} />
-
   <!-- Action buttons -->
   <div class="flex gap-3 mt-4 px-1">
     <Btn cls="bg-blue-500 text-white" onclick={() => onExport?.()}>Export</Btn>
-    <Btn cls="bg-gray-500 text-white" onclick={triggerImport}>Import</Btn>
   </div>
 </div>

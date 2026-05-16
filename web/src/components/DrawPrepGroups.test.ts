@@ -22,7 +22,6 @@ describe("DrawPrepGroups", () => {
         availableRunnerUpPositionsPerGroup: [[2, 3], [2, 3], [2, 3], [2, 3]],
         onChange: vi.fn(),
         onExport: vi.fn(),
-        onImport: vi.fn(),
       },
     });
     expect(container.textContent).toContain("Group 1");
@@ -40,7 +39,6 @@ describe("DrawPrepGroups", () => {
         availableRunnerUpPositionsPerGroup: [],
         onChange: vi.fn(),
         onExport,
-        onImport: vi.fn(),
       },
     });
     await fireEvent.click(getByText("Export"));
